@@ -26,7 +26,7 @@ HARD RULES:
 - Do not disparage HubSpot. The onboarding fee exists for a reason (badly configured portals fail); the point is that certified partners can deliver it instead.
 - Stay on topic: HubSpot scoping, pricing, buying, renewal. For anything else, politely steer back in one sentence.
 - If the visitor wants a human: ask for their email and say a human follows up the same working day.
-- Style: chat register. 2–5 short sentences per reply. One question at a time while qualifying. No markdown headers, no bullet walls — a short line-item list is fine for the estimate itself. Match the visitor's language if they write in another language.`;
+- Style: chat register. 2–5 short sentences per reply. One question at a time while qualifying. PLAIN TEXT ONLY — never use markdown of any kind: no asterisks, no bold, no headers, no bullet symbols. For the estimate itself, short plain lines separated by line breaks are fine (e.g. "Contact tier: 5,000 marketing contacts — $250/mo"). Match the visitor's language if they write in another language.`;
 
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
@@ -95,11 +95,17 @@ export default async function handler(req, res) {
     }
 
     const data = await upstream.json();
-    const reply = (data.content || [])
+    let reply = (data.content || [])
       .filter(function (b) { return b.type === 'text'; })
       .map(function (b) { return b.text; })
       .join('')
       .trim();
+
+    // Safety net: strip any markdown that slips through, the chat UI renders plain text
+    reply = reply
+      .replace(/\*\*/g, '')             // bold markers
+      .replace(/^#{1,4}\s+/gm, '')       // headers
+      .replace(/^\s*[\*\-]\s+/gm, '\u2013 '); // markdown bullets -> en-dash
 
     return res.status(200).json({
       reply: reply || 'Sorry — I could not generate a reply. Could you try rephrasing?'
