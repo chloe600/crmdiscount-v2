@@ -110,6 +110,34 @@ export default async function handler(req, res) {
       .replace(/^#{1,4}\s+/gm, '')       // headers
       .replace(/^\s*[\*\-]\s+/gm, '\u2013 '); // markdown bullets -> en-dash
 
+    const session = String((req.body && req.body.session) || '')
+      .replace(/[^a-z0-9]/gi, '').slice(0, 40);
+
+    // Conversation log: every exchange upserts one row per session in the
+    // "All Conversations" tab, so you can see what visitors ask even when
+    // they never leave an email. Failures never break the chat.
+    try {
+      const hookUrl0 = process.env.LEADS_WEBHOOK_URL;
+      if (hookUrl0 && session) {
+        const fullTranscript = (merged
+          .map(function (m) { return (m.role === 'user' ? 'Visitor: ' : 'Assistant: ') + m.content; })
+          .join('\n\n') + '\n\nAssistant: ' + reply).slice(0, 45000);
+        await fetch(hookUrl0, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            kind: 'conversation',
+            session: session,
+            msgs: merged.filter(function (m) { return m.role === 'user'; }).length,
+            transcript: fullTranscript,
+            ts: new Date().toISOString()
+          })
+        });
+      }
+    } catch (convErr) {
+      console.error('conversation log failed', convErr);
+    }
+
     // Lead capture: when the visitor's newest message contains an email address,
     // post the email + full transcript to the leads webhook (Google Apps Script -> Sheet).
     // Requires env var LEADS_WEBHOOK_URL; failures never break the chat.
