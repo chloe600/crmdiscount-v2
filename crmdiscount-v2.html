@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Don't Overbuy HubSpot — Ask Before You Sign | CRMdiscount.ai</title>
+<meta name="description" content="Ask before you sign: a certified HubSpot Solutions Partner tells you what year one should actually cost — right-sized hubs, seats and contacts, with onboarding delivered by us instead of HubSpot's $1,500–$7,000 fee where your deal qualifies.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://crmdiscount.ai/v2.html">
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T832KNFG');</script>
+<!-- End Google Tag Manager -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --ink:#101B2D;
+  --ink-soft:#3A4557;
+  --paper:#F7F5F0;
+  --card:#FFFFFF;
+  --violet:#6D5AE6;
+  --violet-deep:#5546C8;
+  --credit:#0E7A4A;
+  --debit:#B3402A;
+  --rule:#DDD7CB;
+  --rule-soft:#EAE6DC;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --display:'Fraunces',Georgia,serif;
+  --body:'Public Sans',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;font-size:16.5px;-webkit-font-smoothing:antialiased}
+img{max-width:100%}
+a{color:var(--violet-deep)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--violet-deep);font-weight:600}
+h1,h2,h3{font-family:var(--display);line-height:1.12;font-weight:600;letter-spacing:-0.01em}
+h2{font-size:clamp(28px,3.6vw,40px);margin:14px 0 18px}
+section{padding:88px 0}
+.muted{color:var(--ink-soft)}
+.mono{font-family:var(--mono)}
+.credit{color:var(--credit)}
+.debit{color:var(--debit)}
+button{font-family:inherit}
+
+/* ---------- nav ---------- */
+.nav{position:sticky;top:0;z-index:50;background:rgba(247,245,240,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-family:var(--display);font-size:21px;font-weight:700;color:var(--ink);text-decoration:none}
+.logo em{font-style:italic;color:var(--violet-deep)}
+.logo small{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--ink-soft);letter-spacing:.02em}
+.nav-badge{display:none;font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);letter-spacing:.04em}
+@media(min-width:820px){.nav-badge{display:block}}
+.btn{display:inline-flex;align-items:center;gap:9px;border:none;cursor:pointer;text-decoration:none;font-weight:600;border-radius:8px;transition:transform .12s ease,box-shadow .12s ease,background .12s ease}
+.btn:active{transform:translateY(1px)}
+.btn-chat{background:var(--violet);color:#fff;padding:11px 20px;font-size:15px;box-shadow:0 2px 0 var(--violet-deep)}
+.btn-chat:hover{background:var(--violet-deep)}
+.btn-chat svg{flex:none}
+.btn-lg{padding:16px 28px;font-size:17px;border-radius:10px}
+.btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink);padding:15px 26px;font-size:16px}
+.btn-ghost:hover{background:var(--ink);color:var(--paper)}
+
+/* ---------- hero ---------- */
+.hero{padding:76px 0 92px}
+.hero .wrap{display:grid;grid-template-columns:1fr;gap:56px;align-items:center}
+@media(min-width:960px){.hero .wrap{grid-template-columns:1.05fr .95fr}}
+.hero h1{font-size:clamp(34px,4.6vw,54px);margin:18px 0 22px}
+.hero p.lede{font-size:18px;color:var(--ink-soft);max-width:56ch;margin-bottom:14px}
+.hero p.lede strong{color:var(--ink)}
+.cta-row{display:flex;flex-wrap:wrap;gap:14px;margin:28px 0 14px;align-items:center}
+.trust-line{font-family:var(--mono);font-size:12.5px;color:var(--ink-soft);letter-spacing:.01em}
+.trust-line span{white-space:nowrap}
+.trust-line span+span::before{content:"·";margin:0 8px;color:var(--rule)}
+
+/* estimate document card — the signature */
+.estimate{background:var(--card);border:1px solid var(--rule);border-radius:12px;box-shadow:0 24px 48px -24px rgba(16,27,45,.28),0 2px 6px rgba(16,27,45,.06);padding:30px 30px 24px;transform:rotate(.6deg);position:relative}
+@media(max-width:959px){.estimate{transform:none}}
+.estimate::before{content:"";position:absolute;top:0;left:30px;right:30px;height:4px;border-radius:0 0 4px 4px;background:var(--violet)}
+.est-head{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:14px;border-bottom:1.5px solid var(--ink)}
+.est-head .tag{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+.est-total{font-family:var(--mono);font-weight:600;font-size:30px;color:var(--credit)}
+.est-total small{display:block;font-size:11.5px;font-weight:400;color:var(--ink-soft);letter-spacing:.04em;text-align:right;margin-top:2px}
+.est-sub{font-size:13px;color:var(--ink-soft);padding:12px 0 4px;border-bottom:1px dashed var(--rule)}
+.line{display:flex;justify-content:space-between;gap:16px;align-items:baseline;padding:13px 0;border-bottom:1px dashed var(--rule)}
+.line:last-of-type{border-bottom:none}
+.line .l-name{font-weight:600;font-size:14.5px}
+.line .l-note{display:block;font-size:13px;font-weight:400;color:var(--ink-soft)}
+.line .l-amt{font-family:var(--mono);font-size:15px;font-weight:600;white-space:nowrap}
+.line .l-amt em{display:block;font-style:italic;font-family:var(--body);font-size:11.5px;font-weight:400;color:var(--ink-soft);text-align:right}
+.est-foot{font-size:12px;color:var(--ink-soft);border-top:1.5px solid var(--ink);padding-top:12px;margin-top:6px}
+.est-ask{margin-top:16px;display:flex;justify-content:flex-end}
+.est-ask button{background:none;border:none;cursor:pointer;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--violet-deep);padding:6px 2px;border-bottom:1.5px solid var(--violet-deep)}
+.est-ask button:hover{color:var(--ink);border-color:var(--ink)}
+
+/* ---------- generic section head ---------- */
+.sec-head{max-width:760px}
+.sec-head p{color:var(--ink-soft);font-size:17px}
+
+/* ---------- who we are ---------- */
+.who{background:var(--card);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.who-grid{display:grid;gap:40px;margin-top:48px;grid-template-columns:1fr}
+@media(min-width:900px){.who-grid{grid-template-columns:1fr 1fr 1fr}}
+.who-col h3{font-size:21px;margin-bottom:12px}
+.who-col p{font-size:15.5px;color:var(--ink-soft);margin-bottom:12px}
+.fee-table{margin-top:14px;border-top:1.5px solid var(--ink)}
+.fee-table .line{padding:10px 0}
+.fee-table .l-name{font-weight:500;font-size:14px}
+.pull{margin-top:56px;padding:26px 30px;background:var(--paper);border-left:3px solid var(--violet);font-family:var(--display);font-size:21px;line-height:1.4;max-width:820px}
+.pull .mono{font-family:var(--mono);font-size:12px;display:block;margin-top:12px;color:var(--ink-soft);letter-spacing:.08em;text-transform:uppercase}
+
+/* ---------- platform strip ---------- */
+.platforms{padding:44px 0;border-bottom:1px solid var(--rule)}
+.platforms .label{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);text-align:center;margin-bottom:18px}
+.plat-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 26px;font-family:var(--mono);font-size:13.5px;color:var(--ink-soft)}
+.plat-row b{color:var(--ink);font-weight:600}
+
+/* ---------- comparison ---------- */
+.compare-cards{display:grid;gap:22px;margin-top:44px;grid-template-columns:1fr}
+@media(min-width:820px){.compare-cards{grid-template-columns:1fr 1fr}}
+.cmp{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:28px}
+.cmp .cmp-label{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+.cmp .cmp-amt{font-family:var(--mono);font-size:42px;font-weight:600;margin:8px 0 4px}
+.cmp.quoted .cmp-amt{color:var(--debit)}
+.cmp.sized{border:1.5px solid var(--credit);box-shadow:0 16px 36px -22px rgba(14,122,74,.35)}
+.cmp.sized .cmp-amt{color:var(--credit)}
+.kept{margin-top:26px;font-family:var(--mono);font-size:15px;font-weight:600;color:var(--credit)}
+.cmp-math{margin-top:36px;font-size:14.5px;color:var(--ink-soft);max-width:860px}
+.cmp-math strong{color:var(--ink)}
+.cmp-math p+p{margin-top:12px}
+.fineprint{font-size:12.5px;color:var(--ink-soft);margin-top:18px;max-width:860px}
+
+/* ---------- how it works ---------- */
+.how{background:var(--card);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.steps{display:grid;gap:26px;margin-top:46px;grid-template-columns:1fr}
+@media(min-width:880px){.steps{grid-template-columns:1fr 1fr 1fr}}
+.step{border-top:1.5px solid var(--ink);padding-top:18px}
+.step .n{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--violet-deep)}
+.step h3{font-size:20px;margin:8px 0 8px}
+.step p{font-size:15px;color:var(--ink-soft)}
+.no-call{margin-top:40px;font-size:16px;max-width:70ch}
+
+/* ---------- proof duo ---------- */
+.duo{display:grid;gap:44px;grid-template-columns:1fr;align-items:start}
+@media(min-width:900px){.duo{grid-template-columns:1fr 1fr}}
+.duo h3{font-size:24px;margin-bottom:12px}
+.duo p{color:var(--ink-soft);font-size:16px}
+.mini-lines{margin-top:18px;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:6px 20px}
+.badges{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:52px;font-family:var(--mono);font-size:13px;color:var(--ink-soft)}
+.badges span::before{content:"✓";color:var(--credit);margin-right:8px;font-weight:600}
+
+/* ---------- faq ---------- */
+.faq-list{margin-top:40px;max-width:860px}
+.faq-item{border-top:1px solid var(--rule)}
+.faq-item:last-child{border-bottom:1px solid var(--rule)}
+.faq-item summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:18px;align-items:baseline;padding:22px 4px;font-family:var(--display);font-weight:600;font-size:19px}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{content:"+";font-family:var(--mono);font-size:20px;color:var(--violet-deep);flex:none}
+.faq-item[open] summary::after{content:"−"}
+.faq-body{padding:0 4px 26px;color:var(--ink-soft);font-size:15.5px;max-width:72ch}
+.faq-body p+p{margin-top:12px}
+.faq-body ul{margin:12px 0 0 18px}
+.faq-body li{margin-bottom:6px}
+.faq-body strong{color:var(--ink)}
+
+/* ---------- final cta ---------- */
+.final{background:var(--ink);color:var(--paper);padding:104px 0}
+.final .eyebrow{color:#A79BF2}
+.final h2{color:#fff;font-size:clamp(32px,4.4vw,48px);max-width:20ch}
+.final p{color:#B9C0CC;font-size:18px;max-width:56ch;margin:6px 0 30px}
+.final .trust-line{color:#8E97A6;margin-top:16px}
+.final .btn-chat{box-shadow:0 2px 0 #3F339A}
+
+/* ---------- footer ---------- */
+footer{padding:44px 0 60px;font-size:12.5px;color:var(--ink-soft)}
+footer .wrap{max-width:960px}
+footer a{color:var(--ink-soft)}
+
+/* ---------- reveal (hidden only when JS is active; safety timer un-hides everything) ---------- */
+.js .reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+.js .reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none;transition:none}
+}
+:focus-visible{outline:2.5px solid var(--violet);outline-offset:2px}
+</style>
+</head>
+<body>
+<script>document.documentElement.classList.add("js");</script>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T832KNFG" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="logo" href="/">CRM<em>discount</em>.ai</a>
+    <div class="nav-badge">Certified HubSpot Solutions Partner · Buyer-side scoping</div>
+    <button class="btn btn-chat" data-chat data-cta="nav">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Chat with us
+    </button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Before you sign · Free chat consult</span>
+      <h1>Buying HubSpot for the first time? You're probably about to overbuy it.</h1>
+      <p class="lede">We're marketers and RevOps operators at a certified HubSpot Solutions Partner. We scope, negotiate and implement HubSpot every week — and we've watched most first-time buyers sign for more of it than their stage of business needed, at a price nobody told them was movable.</p>
+      <p class="lede">Ask us before your quote turns into a contract. A two-minute chat tells you whether your deal qualifies to have HubSpot's onboarding fee — <strong>$1,500 to $7,000</strong> — delivered by us as your partner instead, plus an itemized estimate of what the rest should actually cost.</p>
+      <div class="cta-row">
+        <button class="btn btn-chat btn-lg" data-chat data-cta="hero">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Ask what you'd actually pay
+        </button>
+      </div>
+      <p class="trust-line"><span>Free</span><span>No credit card</span><span>The estimate is yours either way</span><span>Not HubSpot, Inc.</span></p>
+    </div>
+
+    <aside class="estimate" aria-label="Example year-one estimate">
+      <div class="est-head">
+        <span class="tag">Your year-one estimate</span>
+        <div>
+          <div class="est-total"><span data-count="9900" data-prefix="−$">−$9,900</span></div>
+          <small>est. year-one saving</small>
+        </div>
+      </div>
+      <p class="est-sub">Example — 12-person team, Marketing Hub Pro + Sales Hub Pro, 8,000 contacts, annual billing</p>
+      <div class="line">
+        <div class="l-name">Contact tier right-sized <span class="l-note">8,000 records → 5,000 marketing contacts</span></div>
+        <div class="l-amt credit">−$3,000</div>
+      </div>
+      <div class="line">
+        <div class="l-name">Paid seats audited <span class="l-note">5 Sales Pro seats → 3 paid, 2 view-only</span></div>
+        <div class="l-amt credit">−$2,400</div>
+      </div>
+      <div class="line">
+        <div class="l-name">HubSpot onboarding fees <span class="l-note">$3,000 Marketing Pro + $1,500 Sales Pro — delivered by us</span></div>
+        <div class="l-amt credit">−$4,500<em>if eligible</em></div>
+      </div>
+      <div class="line">
+        <div class="l-name">Hubs deferred to year two <span class="l-note">Service Hub Pro, Content Hub excluded</span></div>
+        <div class="l-amt mono muted">deferred</div>
+      </div>
+      <div class="line">
+        <div class="l-name">Annual billing &amp; renewal timing</div>
+        <div class="l-amt mono muted">applied</div>
+      </div>
+      <p class="est-foot">Illustrative estimate. Only HubSpot can quote your subscription.</p>
+      <div class="est-ask"><button data-chat data-cta="estimate">Ask about your numbers →</button></div>
+    </aside>
+  </div>
+</header>
+
+<section class="who" id="who">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Who we are</span>
+      <h2>We're a certified HubSpot partner. Here's exactly what that means for you.</h2>
+      <p>Partner certification is what makes the offer on this page possible: HubSpot permits certified partners to deliver onboarding themselves in place of its standard fee. It also means we're not neutral, and we won't pretend to be — we're paid when you buy HubSpot and choose to work with us. So everything here is built to be checked without us in the room: every figure traces to HubSpot's publicly listed rates, the arithmetic is printed in full, and the estimate is yours to take into your own rep conversation and stop there.</p>
+    </div>
+
+    <div class="who-grid">
+      <div class="who-col reveal">
+        <h3>Buying only what you'll use</h3>
+        <p>The largest waste on a typical HubSpot invoice isn't the rate — it's capability the team never switches on. Enterprise bought where Professional would do. Seats for people who only need to read. A contact tier sized for a list that includes 3,000 records nobody will ever email.</p>
+        <p>We map hubs, tiers, seats and contact bands to the way your business actually runs today, and tell you what to defer.</p>
+      </div>
+      <div class="who-col reveal">
+        <h3>The onboarding fee nobody warns you about</h3>
+        <p>Buy Pro or Enterprise direct and a one-time onboarding charge lands on your first invoice — reasonable in purpose (badly configured portals are why accounts fail), but a surprise for most buyers, and payable whether or not you book the sessions.</p>
+        <p>As a certified partner, we can deliver that onboarding ourselves in its place — where your deal qualifies.</p>
+        <div class="fee-table" aria-label="HubSpot onboarding fees">
+          <div class="line"><div class="l-name">Marketing Hub Pro</div><div class="l-amt mono">$3,000</div></div>
+          <div class="line"><div class="l-name">Marketing Hub Enterprise</div><div class="l-amt mono">$7,000</div></div>
+          <div class="line"><div class="l-name">Sales or Service Hub Pro</div><div class="l-amt mono">$1,500</div></div>
+          <div class="line"><div class="l-name">Sales or Service Hub Enterprise</div><div class="l-amt mono">$3,500</div></div>
+        </div>
+      </div>
+      <div class="who-col reveal">
+        <h3>Terms, timing and leverage</h3>
+        <p>Annual commitment, upfront payment, contract length, renewal date and where you land in HubSpot's fiscal quarter all move the final number. So does knowing which individual features are gated at which tier — one capability sitting one rung up is the most expensive $200 a month most teams ever spend.</p>
+        <p>We price and scope this every week. We know where those lines fall and when to push.</p>
+      </div>
+    </div>
+
+    <div class="pull reveal">
+      Our honest read: for most mid-market teams, HubSpot is the strongest platform we've worked with. It's also the one buyers most consistently overbuy.
+      <span class="mono">— and we say that as the partner selling it</span>
+    </div>
+  </div>
+</section>
+
+<div class="platforms">
+  <div class="wrap">
+    <p class="label">CRM &amp; marketing platforms we've bought, negotiated and implemented</p>
+    <div class="plat-row"><b>HubSpot</b><span>Salesforce</span><span>Klaviyo</span><span>GoHighLevel</span><span>Pipedrive</span><span>Zoho CRM</span><span>ActiveCampaign</span><span>Marketo</span><span>Braze</span><span>Microsoft Dynamics 365</span><span>Close</span><span>Attio</span><span>Keap</span><span>Freshsales</span><span>monday CRM</span></div>
+  </div>
+</div>
+
+<section id="compare">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">The difference it makes</span>
+      <h2>Same HubSpot. Different scope, different invoice.</h2>
+      <p>An illustrative first-year comparison for a 12-person team buying Marketing Hub Professional and Sales Hub Professional with an 8,000-record database.</p>
+    </div>
+    <div class="compare-cards">
+      <div class="cmp quoted reveal">
+        <div class="cmp-label">Bought as typically quoted</div>
+        <div class="cmp-amt">$27,180</div>
+      </div>
+      <div class="cmp sized reveal">
+        <div class="cmp-label">Right-sized, partner-delivered onboarding</div>
+        <div class="cmp-amt">$17,280</div>
+      </div>
+    </div>
+    <p class="kept reveal">$9,900 kept in your budget — 36% of year one</p>
+    <div class="cmp-math reveal">
+      <p><strong>How the two columns are built.</strong> As quoted: Marketing Hub Professional at $890/mo with the contact tier raised to cover 8,000 records (+$500/mo), plus 5 Sales Hub Professional seats at $100/mo — $1,890/mo × 12 = $22,680 — plus HubSpot's onboarding fees of $3,000 (Marketing Pro) and $1,500 (Sales Pro).</p>
+      <p>Right-sized: 3,000 records reclassified as non-marketing contacts, dropping to one contact block (+$250/mo); 3 paid Sales Pro seats with 2 stakeholders moved to view-only — $1,440/mo × 12 = $17,280 — with onboarding delivered by us as a certified partner rather than purchased from HubSpot.</p>
+    </div>
+    <p class="fineprint reveal">Figures reflect HubSpot's publicly listed 2026 rates and are for illustration only. Your quote will differ. Partner-delivered onboarding is not guaranteed and depends on eligibility, deal size and tier.</p>
+  </div>
+</section>
+
+<section class="how" id="how">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">How it works</span>
+      <h2>From a chat to a negotiation brief in three steps</h2>
+      <p>Built for the two weeks between your first HubSpot demo and your signature. No sales call required at any point — you can take the estimate into your own rep conversation and stop there.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <span class="n">Step 1</span>
+        <h3>Start the chat</h3>
+        <p>Four details — which parts of your business go into HubSpot, roughly how big your list is, how many people will genuinely log in, and when you need to decide. No lookups, no spreadsheet.</p>
+      </div>
+      <div class="step reveal">
+        <span class="n">Step 2</span>
+        <h3>Get your itemized estimate</h3>
+        <p>What to buy, what to defer, and what to push on — with the arithmetic attached. In the chat if it's simple, or as a same-day email if your setup needs a closer look.</p>
+      </div>
+      <div class="step reveal">
+        <span class="n">Step 3</span>
+        <h3>Optional: we deliver your onboarding</h3>
+        <p>If your deal qualifies and you want it, we deliver onboarding in place of HubSpot's fee. If you'd rather negotiate alone with the numbers, that's a perfectly good outcome.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="duo">
+      <div class="reveal">
+        <h3>Four details. No lookups, no spreadsheet.</h3>
+        <p>Which parts of your business you want in HubSpot, roughly how big your list is, how many people will genuinely log in, and when you need to decide. If a question makes you go and find a document, we've asked it wrong.</p>
+        <div class="mini-lines">
+          <div class="line"><div class="l-name">Paid seats audited</div><div class="l-amt credit">−$2,400</div></div>
+          <div class="line"><div class="l-name">Onboarding fees</div><div class="l-amt credit">−$4,500<em>if eligible</em></div></div>
+        </div>
+        <p style="font-size:12.5px;margin-top:10px">Illustrative — 12-person team, Marketing + Sales Pro, 8,000 records</p>
+      </div>
+      <div class="reveal">
+        <h3>Every line comes with the reasoning attached.</h3>
+        <p>You get the number, the arithmetic behind it, and the sentence to use when your rep pushes back. Every figure traces to HubSpot's own published rates — nothing you can't check yourself before you walk into the call.</p>
+        <div class="badges">
+          <span>Certified HubSpot Solutions Partner — and we've told you what that's worth to us</span>
+          <span>Free — the estimate is yours either way</span>
+          <span>Built for first-time buyers before signature</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="who" id="faq">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Questions</span>
+      <h2>Before you ask</h2>
+    </div>
+    <div class="faq-list reveal">
+
+      <details class="faq-item">
+        <summary>Are you a HubSpot partner?</summary>
+        <div class="faq-body">
+          <p><strong>Yes — a certified HubSpot Solutions Partner.</strong> That's what makes the offer on this page possible: HubSpot permits certified partners to deliver onboarding themselves in place of its standard fee.</p>
+          <p>It also means we're not a neutral advisor, and we won't dress up as one. We benefit when you buy HubSpot and choose to work with us. That's exactly why this page is built to be verified without us: published rates, printed arithmetic, and an estimate you can take into your own rep conversation with no further contact with us.</p>
+          <p>We are not HubSpot, Inc. Nothing on this page is authorised, sponsored or endorsed by HubSpot, Inc.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Then how do you make money?</summary>
+        <div class="faq-body">
+          <p>Two ways, both in the open. If your deal qualifies and you choose us, we deliver your onboarding — and any implementation work you separately ask for — as paid or partner-credited work for our agency. And deals we register count toward our standing in HubSpot's partner program.</p>
+          <p>The chat and the estimate are free, and they don't oblige you to either. If you'd prefer to take your numbers and negotiate alone, that's a perfectly good outcome and costs you nothing.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Can you guarantee my onboarding fee will be replaced?</summary>
+        <div class="faq-body">
+          <p><strong>No — and be sceptical of anyone who does.</strong> Whether onboarding can be partner-delivered in place of HubSpot's fee depends on your tier, deal size and timing.</p>
+          <p>The difference here: we're the partner making that call, so we can tell you where you stand in the first two minutes of a chat — not after three discovery calls.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Is this official HubSpot pricing?</summary>
+        <div class="faq-body">
+          <p>No. Every figure on this page is either HubSpot's own publicly listed rate or our illustrative modelling of it. Only HubSpot can quote you. Prices, tiers and fees change — always confirm current numbers with HubSpot directly before signing anything.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Isn't the real saving just a discount on the rate?</summary>
+        <div class="faq-body">
+          <p>That's the smaller half of it. In our experience the bigger loss is money spent on a plan the team never grows into — Enterprise bought for two Enterprise features, seats issued to people who only read reports, a contact tier sized to a list that's mostly dormant records.</p>
+          <p>An underused CRM costs twice: once on the invoice, and again in the adoption problem it creates. We scope for what your business needs at its current stage, so the tool gets used and the number stays defensible at renewal.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Which platforms do you actually know?</summary>
+        <div class="faq-body">
+          <p>HubSpot is where most of our collective experience sits — it's the platform we're certified on and implement every week. Beyond it, our team has bought, negotiated or implemented Salesforce, Klaviyo, GoHighLevel, Pipedrive, Zoho CRM, ActiveCampaign, Marketo, Braze, Microsoft Dynamics 365, Close, Attio, Keap, Freshsales and monday CRM.</p>
+          <p>We're happy to tell you when HubSpot isn't the right answer for your stage. Sometimes it isn't — and a partner telling you that is worth more than a stranger telling you that.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>We already use HubSpot. Is this still useful?</summary>
+        <div class="faq-body">
+          <p>Yes, but the mechanics are different — and you should know that before you start.</p>
+          <p>Onboarding is a one-time fee charged on your first purchase. At renewal there is no onboarding fee left to replace, so that lever is gone. Anyone telling an existing customer they can get it removed is selling you something that doesn't exist.</p>
+          <p><strong>What replaces it is usually worth more anyway.</strong> Renewal is where overbuying has had a year to compound: seats issued to people who never logged in, a contact tier ratcheted up after one campaign and never brought back down, a hub bought for a project that ended in March. We run the same scoping pass against what you're actually using and show you what to cut before you re-sign.</p>
+          <p>If working with us makes sense from there, it's a different kind of engagement — helping you either genuinely use the features you're already paying for, or strip out the ones you aren't. Both directions save money.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>This brand is new. Why should we trust you?</summary>
+        <div class="faq-body">
+          <p>Fair question, and we'd rather answer it than dress it up. CRMdiscount.ai launched this year. The team behind it didn't — we've scoped and implemented HubSpot portals for years as an agency, for companies from travel operators to B2B SaaS.</p>
+          <p>There's also nothing to refund, for the simple reason that you don't pay us for any of this. No contract with us, no card to enter, no commitment at any point in the chat.</p>
+          <p>So judge us on what's checkable instead: every fee on this page is HubSpot's own published rate, the arithmetic in our comparison is printed in full so you can verify it line by line, and we've told you exactly who we are and how we're paid. If the reasoning doesn't hold up, you'll know inside two minutes — and you'll have lost two minutes.</p>
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<section class="final" id="chat">
+  <div class="wrap">
+    <span class="eyebrow">Free · Two minutes · No call required</span>
+    <h2>Ask what you'd actually pay.</h2>
+    <p>Four details in chat. An itemized year-one estimate with the reasoning attached. Then negotiate with your rep yourself — or let us deliver your onboarding if your deal qualifies.</p>
+    <button class="btn btn-chat btn-lg" data-chat data-cta="final">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Open the chat
+    </button>
+    <p class="trust-line">Answered live by our team on weekdays — leave an email anytime and the estimate follows the same day.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>© 2026 CRMdiscount.ai — a buyer-side HubSpot scoping service operated by a certified HubSpot Solutions Partner agency. We are not HubSpot, Inc., and we are not affiliated with, sponsored by or endorsed by HubSpot, Inc. HubSpot is a registered trademark of HubSpot, Inc. Salesforce, Klaviyo, GoHighLevel, Pipedrive and all other platform names are trademarks of their respective owners, used here for identification only. All figures shown are illustrative estimates based on publicly listed rates and do not constitute a quote, an offer, or a guarantee of savings. Only HubSpot, Inc. can price your subscription. Whether onboarding can be delivered by us in place of HubSpot's fee depends on eligibility, deal size and tier, and is determined at our discretion. If you engage us for onboarding or implementation, that engagement is with our agency directly — and we'll name it before you sign anything.</p>
+    <p style="margin-top:12px"><a href="https://crmdiscount.ai/privacy.html">Privacy Policy</a></p>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   CHAT WIDGET — Crisp (swap the ID below and you're live)
+   1. Create a free workspace at crisp.chat
+   2. Settings → Website Settings → copy your Website ID
+   3. Paste it below. That's the only change needed.
+   To use Tidio instead: delete the Crisp block, paste Tidio's
+   script tag, and change openChat() to window.tidioChatApi.open()
+   ============================================================ */
+var CRISP_WEBSITE_ID = "REPLACE_WITH_CRISP_WEBSITE_ID";
+
+if (CRISP_WEBSITE_ID.indexOf("REPLACE") === -1) {
+  window.$crisp = [];
+  window.CRISP_WEBSITE_ID = CRISP_WEBSITE_ID;
+  (function(){var d=document,s=d.createElement("script");
+  s.src="https://client.crisp.chat/l.js";s.async=1;
+  d.getElementsByTagName("head")[0].appendChild(s);})();
+
+  /* GTM conversion events from chat behaviour */
+  window.$crisp.push(["on", "chat:opened", function(){
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({event: "chat_opened"});
+  }]);
+  window.$crisp.push(["on", "message:sent", function(){
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({event: "chat_engaged"});   // ← use as the Ads secondary conversion
+  }]);
+}
+
+/* All chat CTAs route here */
+function openChat(source){
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({event: "chat_open_click", cta_location: source});
+  if (window.$crisp && CRISP_WEBSITE_ID.indexOf("REPLACE") === -1) {
+    window.$crisp.push(["do", "chat:open"]);
+  } else {
+    /* Widget not configured yet — send visitors somewhere useful */
+    document.getElementById("chat").scrollIntoView({behavior:"smooth"});
+  }
+}
+document.querySelectorAll("[data-chat]").forEach(function(btn){
+  btn.addEventListener("click", function(){ openChat(btn.getAttribute("data-cta")); });
+});
+
+/* Scroll reveals */
+var io = new IntersectionObserver(function(entries){
+  entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target);} });
+},{threshold:.12});
+document.querySelectorAll(".reveal").forEach(function(el){ io.observe(el); });
+/* Safety: never leave content hidden if the observer misfires */
+setTimeout(function(){ document.querySelectorAll(".reveal").forEach(function(el){ el.classList.add("in"); }); }, 1500);
+
+/* Count-up on the hero saving figure */
+var counted = false;
+var counter = document.querySelector("[data-count]");
+if (counter && !window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+  new IntersectionObserver(function(entries, obs){
+    if(!entries[0].isIntersecting || counted) return;
+    counted = true; obs.disconnect();
+    var target = parseInt(counter.getAttribute("data-count"),10);
+    var start = null;
+    function tick(ts){
+      if(!start) start = ts;
+      var p = Math.min((ts - start)/900, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      counter.textContent = "−$" + Math.round(target * eased).toLocaleString("en-US");
+      if(p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  },{threshold:.4}).observe(counter);
+}
+</script>
+</body>
+</html>
