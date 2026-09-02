@@ -1,0 +1,132 @@
+/* CRMdiscount.ai — blog styles.
+   Tokens copied verbatim from index.html so the blog cannot drift from the site. */
+:root{
+  --ink:#12172B;
+  --ink-soft:#4A5169;
+  --accent:#4F46E5;
+  --accent-deep:#4338CA;
+  --tint:#EEEDFB;
+  --paper:#FFFFFF;
+  --wash:#F6F7FB;
+  --line:#E4E7F0;
+  --green:#1FA97C;
+  --radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+html,body{overflow-x:hidden;max-width:100%}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  color:var(--ink);
+  background:var(--paper);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  font-feature-settings:"kern" 1,"liga" 1;
+}
+h1,h2,h3{font-family:'Bricolage Grotesque','Inter',sans-serif;line-height:1.1;letter-spacing:-0.022em;text-wrap:balance}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+a{color:inherit}
+::selection{background:rgba(79,70,229,.16)}
+
+/* ---- Top bar with navigation ---- */
+.topbar{padding:20px 0;border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.25rem;text-decoration:none}
+.logo em{font-style:normal;color:var(--accent)}
+.logo svg{flex:none}
+.partner-chip{font-size:.78rem;font-weight:600;color:var(--ink-soft);border:1px solid var(--line);border-radius:999px;padding:6px 14px;background:var(--wash);white-space:nowrap}
+.nav{display:flex;align-items:center;gap:22px}
+.nav a{font-size:.9rem;font-weight:600;color:var(--ink-soft);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
+.nav a:hover{color:var(--ink)}
+.nav a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
+.nav a:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+
+/* ---- Buttons (same as landing page) ---- */
+.cta{
+  display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:#fff;font-weight:600;font-size:1.05rem;
+  padding:16px 32px;border-radius:12px;text-decoration:none;border:none;cursor:pointer;font-family:inherit;
+  box-shadow:0 6px 20px rgba(79,70,229,.35);
+  transition:transform .15s ease, background .15s ease;
+}
+.cta:hover{background:var(--ink);transform:translateY(-2px);box-shadow:0 6px 20px rgba(18,23,43,.30)}
+.cta:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+
+/* ---- Blog index ---- */
+.blog-head{padding:64px 0 8px}
+.blog-head h1{font-size:clamp(2rem,4vw,2.8rem);font-weight:800;margin-bottom:14px}
+.blog-head p{color:var(--ink-soft);max-width:60ch}
+.post-list{padding:36px 0 64px;display:grid;gap:0}
+.post-card{
+  display:grid;grid-template-columns:150px 1fr;gap:28px;align-items:baseline;
+  padding:30px 0;border-top:1px solid var(--line);text-decoration:none;
+}
+.post-card:last-child{border-bottom:1px solid var(--line)}
+.post-card .meta{font-size:.82rem;color:var(--ink-soft);font-variant-numeric:tabular-nums lining-nums}
+.post-card h2{font-size:1.45rem;font-weight:600;margin-bottom:8px;max-width:30ch}
+.post-card:hover h2{color:var(--accent-deep)}
+.post-card p{color:var(--ink-soft);max-width:66ch;text-wrap:pretty}
+.post-card:focus-visible{outline:3px solid var(--ink);outline-offset:4px}
+.empty{padding:60px 0;color:var(--ink-soft)}
+
+/* ---- Pagination ---- */
+.pager{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 0 72px}
+.pager a,.pager span{font-size:.9rem;font-weight:600;text-decoration:none;padding:10px 18px;border:1px solid var(--line);border-radius:10px}
+.pager a:hover{border-color:var(--accent);color:var(--accent-deep)}
+.pager span{color:var(--ink-soft);border-color:transparent;font-weight:500}
+.pager .count{border:none;padding:0}
+
+/* ---- Article ---- */
+.article{padding:56px 0 8px}
+.article .wrap{max-width:720px}
+.back{display:inline-block;font-size:.86rem;font-weight:600;color:var(--ink-soft);text-decoration:none;margin-bottom:26px}
+.back:hover{color:var(--accent-deep)}
+.article h1{font-size:clamp(1.9rem,3.6vw,2.6rem);font-weight:800;margin-bottom:16px}
+.article .byline{font-size:.85rem;color:var(--ink-soft);padding-bottom:26px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums lining-nums}
+.body{padding:34px 0 8px}
+.body p{margin-bottom:20px;text-wrap:pretty}
+.body h2{font-size:1.5rem;font-weight:800;margin:40px 0 14px}
+.body h3{font-size:1.15rem;font-weight:600;margin:30px 0 10px}
+.body ul,.body ol{margin:0 0 20px 22px}
+.body li{margin-bottom:8px}
+.body a{color:var(--accent-deep);text-decoration:underline;text-underline-offset:2px}
+.body strong{font-weight:600}
+.body blockquote{border-left:3px solid var(--accent);background:var(--wash);padding:16px 20px;margin:0 0 20px;border-radius:0 var(--radius) var(--radius) 0}
+.body blockquote p:last-child{margin-bottom:0}
+.body img{max-width:100%;height:auto;border-radius:var(--radius);border:1px solid var(--line);margin-bottom:20px}
+.body table{width:100%;border-collapse:collapse;margin-bottom:22px;font-size:.94rem}
+.body th,.body td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+.body th{font-weight:600;background:var(--wash)}
+.body code{background:var(--wash);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:.9em}
+.body hr{border:none;border-top:1px solid var(--line);margin:32px 0}
+
+/* ---- End-of-post conversion block ---- */
+.post-cta{background:var(--wash);border:1px solid var(--line);border-radius:18px;padding:32px;margin:44px 0 0;text-align:center}
+.post-cta h2{font-size:1.4rem;font-weight:800;margin-bottom:10px}
+.post-cta p{color:var(--ink-soft);max-width:52ch;margin:0 auto 22px;font-size:.96rem}
+.post-cta .fine{font-size:.76rem;margin-top:14px;margin-bottom:0}
+.more{padding:56px 0 0;border-top:1px solid var(--line);margin-top:56px}
+.more .kicker{font-size:.8rem;font-weight:600;letter-spacing:.08em;color:var(--accent-deep);margin-bottom:14px}
+
+/* ---- Footer (same as landing page) ---- */
+footer{padding:36px 0;font-size:.78rem;color:var(--ink-soft);border-top:1px solid var(--line);margin-top:72px}
+footer .legal{max-width:900px;margin-bottom:16px;line-height:1.65}
+footer .links{display:flex;gap:20px}
+footer a{color:var(--ink-soft)}
+
+@media (max-width:700px){
+  .post-card{grid-template-columns:1fr;gap:6px}
+  .blog-head{padding:44px 0 4px}
+  .article{padding:36px 0 4px}
+}
+@media (max-width:560px){
+  .topbar .wrap{flex-wrap:wrap;justify-content:center;gap:10px}
+  .logo{font-size:1.1rem}
+  .partner-chip{white-space:normal;text-align:center;font-size:.72rem;padding:5px 12px}
+  .nav{gap:18px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .cta{transition:none}
+  .cta:hover{transform:none}
+}

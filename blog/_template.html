@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TITLE}} | CRMdiscount.ai</title>
+<meta name="description" content="{{DESCRIPTION}}">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="{{CANONICAL}}">
+<meta name="theme-color" content="#12172B">
+<meta property="og:type" content="article">
+<meta property="og:url" content="{{CANONICAL}}">
+<meta property="og:title" content="{{TITLE}}">
+<meta property="og:description" content="{{DESCRIPTION}}">
+<meta property="article:published_time" content="{{DATE_ISO}}">
+<link rel="icon" type="image/svg+xml" href="{{FAVICON}}">
+<link rel="alternate" type="application/rss+xml" title="CRMdiscount.ai blog" href="/blog/feed.xml">
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T832KNFG');</script>
+<!-- End Google Tag Manager -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/blog/blog.css">
+
+<script type="application/ld+json">{{JSONLD}}</script>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T832KNFG"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+{{TOPBAR}}
+
+<article class="article">
+  <div class="wrap">
+    <a class="back" href="/blog/">Back to all articles</a>
+    <h1>{{TITLE}}</h1>
+    <p class="byline">{{DATE_HUMAN}} · {{READING}} min read</p>
+    <div class="body">
+{{BODY}}
+    </div>
+
+    <div class="post-cta">
+      <h2>Find out what your HubSpot year one should cost</h2>
+      <p>Answer four questions in the assistant and get an itemised estimate, or book a free 20-minute scoping call. The estimate is yours to negotiate with either way.</p>
+      <a class="cta" href="/#book" data-book data-position="blog_post">Book a free scoping call</a>
+      <p class="fine">No obligation. We are a paid HubSpot Solutions Partner, not HubSpot.</p>
+    </div>
+
+{{MORE}}
+  </div>
+</article>
+
+{{FOOTER}}
+
+<script>
+(function(){
+  window.dataLayer = window.dataLayer || [];
+  document.querySelectorAll("[data-book]").forEach(function(el){
+    el.addEventListener("click", function(){
+      window.dataLayer.push({ event: "booking_click", cta_position: el.getAttribute("data-position") || "unknown" });
+    });
+  });
+})();
+</script>
+</body>
+</html>
