@@ -6,10 +6,10 @@
 <title>Don't Overbuy HubSpot — Ask Before You Sign | CRMdiscount.ai</title>
 <meta name="description" content="Ask before you sign: a certified HubSpot Solutions Partner tells you what year one should actually cost — right-sized hubs, seats and contacts, with onboarding delivered by us instead of HubSpot's $1,500–$7,000 fee where your deal qualifies.">
 <meta name="robots" content="index,follow">
-<link rel="canonical" href="https://try.crmdiscount.ai/">
+<link rel="canonical" href="https://crmdiscount.ai/">
 <meta name="theme-color" content="#12172B">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://try.crmdiscount.ai/">
+<meta property="og:url" content="https://crmdiscount.ai/">
 <meta property="og:title" content="Don't Overbuy HubSpot — Ask Before You Sign">
 <meta property="og:description" content="A certified HubSpot Solutions Partner tells you what year one should actually cost — free, in a two-minute chat. The estimate is yours to negotiate with either way.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Crect x='2' y='6' width='26' height='18' rx='4' fill='%2312172B'/%3E%3Ccircle cx='10' cy='15' r='3.4' fill='none' stroke='%234F46E5' stroke-width='2'/%3E%3Cpath d='M17 20 L23 10' stroke='%234F46E5' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='17.5' cy='11.5' r='1.6' fill='%234F46E5'/%3E%3Ccircle cx='22.5' cy='18.5' r='1.6' fill='%234F46E5'/%3E%3C/svg%3E">
@@ -21,6 +21,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-T832KNFG');</script>
 <!-- End Google Tag Manager -->
+
+<!-- Calendly popup widget -->
+<link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css">
+<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+<!-- End Calendly -->
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -332,7 +337,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <h1>Buying HubSpot for the first time? You're probably about to <span class="strike">overbuy it.</span></h1>
       <p class="lead">We're marketers and RevOps operators at a certified HubSpot Solutions Partner. We scope, negotiate and implement HubSpot every week &mdash; and we've watched most first-time buyers sign for more of it than their stage of business needed, at a price nobody told them was movable.</p>
       <p class="lead">Ask us before your quote turns into a contract. A two-minute chat tells you whether your deal qualifies to have HubSpot's onboarding fee &mdash; <strong>$1,500 to $7,000</strong> &mdash; delivered by us as your partner instead, plus an itemized estimate of what the rest should actually cost.</p>
-      <a class="cta" href="#book" data-book data-position="hero">
+      <a class="cta" id="bookBtnHero" href="#book" data-book data-position="hero">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4 M16 2v4 M3 9h18"/></svg>
         Book a free scoping call
       </a>
@@ -542,7 +547,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <p class="kicker">Free &middot; 20 minutes &middot; No obligation</p>
     <h2>Book a free scoping call.</h2>
     <p class="sub">Bring your HubSpot quote &mdash; or nothing at all. You'll leave with an itemized year-one estimate and the exact lines to push on with your rep. Whether we deliver your onboarding afterwards is entirely up to you.</p>
-    <a class="cta" id="bookBtn" href="REPLACE_WITH_BOOKING_LINK" data-position="final">
+    <a class="cta" id="bookBtn" href="#chatFrame" data-book data-position="final">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4 M16 2v4 M3 9h18"/></svg>
       Book a call
     </a>
@@ -559,11 +564,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <script>
 // ============================================================
-// Booking CTA + embedded AI assistant (iframe -> /chat.html)
-// Set your booking link on the bookBtn href above:
-// replace REPLACE_WITH_BOOKING_LINK with e.g. your Calendly URL.
-// Until it is set, the button scrolls to the assistant instead.
+// BOOKING — this is the only line you need to edit.
+// Paste your Calendly event link between the quotes, e.g.
+//   "https://calendly.com/crmdiscount/scoping-call"
+// Until it is set, both CTAs scroll to the AI assistant instead.
 // ============================================================
+var CALENDLY_URL = "REPLACE_WITH_CALENDLY_LINK";
+
 (function(){
   function push(evt, extra){
     window.dataLayer = window.dataLayer || [];
@@ -572,54 +579,57 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     window.dataLayer.push(o);
   }
 
-  var bookBtn = document.getElementById("bookBtn");
-  var bookingConfigured = bookBtn && bookBtn.getAttribute("href").indexOf("REPLACE") === -1;
+  var configured = CALENDLY_URL.indexOf("REPLACE") === -1 && CALENDLY_URL.indexOf("http") === 0;
+  var ctas = document.querySelectorAll("[data-book]");
+  var chatFrame = document.getElementById("chatFrame");
 
-  document.querySelectorAll("[data-book]").forEach(function(el){
-    el.addEventListener("click", function(){
+  // Point the real link at Calendly once configured, so middle-click,
+  // open-in-new-tab and crawlers all get a valid destination.
+  if (configured) {
+    for (var i = 0; i < ctas.length; i++) {
+      ctas[i].setAttribute("href", CALENDLY_URL);
+      ctas[i].setAttribute("target", "_blank");
+      ctas[i].setAttribute("rel", "noopener");
+    }
+  }
+
+  for (var j = 0; j < ctas.length; j++) {
+    ctas[j].addEventListener("click", function(e){
+      var el = e.currentTarget;
       push("booking_click", { cta_position: el.getAttribute("data-position") || "unknown" });
-    });
-  });
 
-  if (bookBtn) {
-    bookBtn.addEventListener("click", function(e){
-      push("booking_click", { cta_position: "final" });
-      if (!bookingConfigured) {
+      if (!configured) {
+        // No booking link yet — send them to the assistant rather than nowhere.
         e.preventDefault();
-        document.getElementById("chatFrame").scrollIntoView({ behavior: "smooth", block: "center" });
+        if (chatFrame) chatFrame.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+
+      // Calendly script loaded: open the popup so the visitor never leaves.
+      // If it failed to load, fall through to the href (opens in a new tab).
+      if (window.Calendly && typeof window.Calendly.initPopupWidget === "function") {
+        e.preventDefault();
+        window.Calendly.initPopupWidget({ url: CALENDLY_URL });
       }
     });
   }
 
   window.addEventListener("message", function(e){
+    // Completed booking -> booking_scheduled (strongest conversion signal).
+    if (e.origin === "https://calendly.com" &&
+        e.data && typeof e.data.event === "string" &&
+        e.data.event === "calendly.event_scheduled") {
+      push("booking_scheduled");
+      return;
+    }
+
+    // First message in the chat -> chat_engaged (the Google Ads conversion).
+    // Same-origin only: /chat.html is served from this domain.
+    if (e.origin !== window.location.origin) return;
     if (e.data && e.data.crmchat_event === "chat_engaged") {
-      push("chat_engaged"); // the Google Ads conversion event
+      push("chat_engaged");
     }
   });
-})();
-
-// Animate the hero year-one estimate from $0 on every page load / return
-(function(){
-  var num = document.getElementById('estNum');
-  if(!num) return;
-  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var target = 9900, dur = 1300, raf = null;
-  function fmt(v){ return '\u2212$' + Math.round(v).toLocaleString('en-US'); }
-  function ease(t){ return 1 - Math.pow(1 - t, 3); }
-  function run(){
-    if(reduced){ num.textContent = fmt(target); return; }
-    if(raf) cancelAnimationFrame(raf);
-    var start = null;
-    function tick(ts){
-      if(start === null) start = ts;
-      var p = Math.min((ts - start) / dur, 1);
-      num.textContent = fmt(ease(p) * target);
-      if(p < 1) raf = requestAnimationFrame(tick);
-    }
-    num.textContent = fmt(0);
-    raf = requestAnimationFrame(tick);
-  }
-  window.addEventListener('pageshow', run);
 })();
 
 // Interactive "How it works" steps
