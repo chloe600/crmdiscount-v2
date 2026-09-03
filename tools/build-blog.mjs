@@ -165,10 +165,15 @@ function parsePost(file) {
 
   const body = m[2].trim();
   const words = body.split(/\s+/).length;
+  const firstImg = body.match(/^!\[([^\]]*)\]\(([^)\s]+)\)/m);
+  const image = meta.image || (firstImg ? firstImg[2] : "");
+  const imageAlt = meta.imageAlt || (firstImg ? firstImg[1] : "");
   return {
     ...meta,
     slug,
     body,
+    image,
+    imageAlt,
     html: markdown(body),
     reading: Math.max(1, Math.round(words / 220)),
     url: `${SITE_URL}/blog/${slug}/`,
@@ -188,8 +193,13 @@ const write = (rel, html) => {
 };
 
 function card(p) {
-  return `      <a class="post-card" href="${p.path}">
-        <div class="meta">${p.human}</div>
+  const thumb = p.image
+    ? `\n          <img class="thumb" src="${escAttr(p.image)}" alt="${escAttr(p.imageAlt || p.title)}" loading="lazy" decoding="async" width="440" height="275">`
+    : "";
+  return `      <a class="post-card${p.image ? "" : " no-thumb"}" href="${p.path}">
+        <div class="meta">
+          <span class="date">${p.human}</span>${thumb}
+        </div>
         <div>
           <h2>${esc(p.title)}</h2>
           <p>${esc(p.description)}</p>
