@@ -22,10 +22,10 @@ import { fileURLToPath } from "node:url";
 // ─────────────────────────────────────────────────────────────
 // Settings — change SITE_URL here when the domain changes.
 // ─────────────────────────────────────────────────────────────
-const SITE_URL     = "https://try.crmdiscount.ai";
+const SITE_URL     = "https://crmdiscount.ai";
 const PER_PAGE     = 6;
-const BLOG_TITLE   = "HubSpot pricing, plainly explained";
-const BLOG_INTRO   = "What HubSpot actually costs, what you can drop, and where buyers overpay. Written by a certified Solutions Partner who is paid to right-size the deal, not to grow it.";
+const BLOG_TITLE   = "CRM buying, without the sales pitch";
+const BLOG_INTRO   = "Platform comparisons, real pricing, and when to buy. Written by a certified HubSpot Solutions Partner who is paid to right-size the deal, not to grow it.";
 const STATIC_PAGES = ["/", "/privacy.html"];
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
