@@ -66,7 +66,6 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
   </span>
   <span><strong>CRMdiscount assistant</strong><small>AI &middot; instant answers &middot; every figure checkable</small></span>
 </div>
-<div class="counter" id="counter"><span>Onboarding on your setup so far</span><b id="counterVal">$0</b></div>
 <div class="msgs" id="msgs">
   <div class="typing" id="typing"><i></i><i></i><i></i></div>
 </div>
@@ -89,10 +88,8 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
   var awaitingEmail = false, emailGiven = false, emailNudged = false, userMsgCount = 0, FREE_LIMIT = 15;
 
   // ---------- copy ----------
-  var M1 = "I\u2019m an AI on an independent site, built by RevOps operators whose agency is a certified HubSpot partner \u2014 disclosed, because that\u2019s how this gets paid.";
-  var M2 = "Most first-time HubSpot quotes run about a third bigger than they need to \u2014 on a 12-person team, that\u2019s ~$9,900 in year one.";
-  var M3 = "Which hubs are you looking at?";
-  var CATCH = "No catch \u2014 an incentive, disclosed. CRMdiscount is independent, but the operators behind it run a certified partner agency: if your deal qualifies and you choose them, delivering your onboarding is paid work for that agency. That\u2019s exactly why everything here is built to be checked without us \u2014 the chat and the estimate are free, and yours to take straight to your own HubSpot rep.";
+  var M1 = "Hi \u2014 I\u2019m an AI built by operators at a certified HubSpot partner agency (disclosed \u2014 that\u2019s how this gets paid). Which hubs are you looking at? I\u2019ll price your year one.";
+  var CATCH = "No catch \u2014 an incentive, disclosed. CRMdiscount is independent, but the operators behind it run a certified partner agency: if your deal qualifies and you choose them, delivering your onboarding is paid work for that agency. The chat and the estimate are free, and yours to take straight to your own HubSpot rep.";
   var IDLE_PROMPTS = [
     "\u201CIs the onboarding fee actually mandatory?\u201D",
     "\u201CWhat does Marketing Hub Pro really cost with 8,000 contacts?\u201D",
@@ -113,15 +110,9 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
   var msgsEl = document.getElementById("msgs"), typing = document.getElementById("typing");
   var input = document.getElementById("inBox"), sendBtn = document.getElementById("sendBtn");
   var chipsEl = document.getElementById("chips"), promptLine = document.getElementById("promptLine");
-  var counter = document.getElementById("counter"), counterVal = document.getElementById("counterVal");
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var messages = [];           // context sent to the bot
   var pending = false, engagedFired = false, userEngaged = false;
-  var stage = null;            // hubs -> contacts -> seats -> timing -> done
-  var answers = {};
-  var selectedHubs = [];
-  var fees = { "Marketing": 3000, "Sales": 1500, "Support": 1500, "Website": 0, "Data & ops": 0 };
-  var feeTotal = 0;
   var loadedAt = Date.now(), proactiveShown = 0;
   var greetStarted = false, greetDone = false, greetTimers = [], activeTw = null;
 
@@ -181,86 +172,7 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
       chipsEl.appendChild(b);
     });
   }
-  function setCounter(v){
-    feeTotal = v;
-    counterVal.textContent = "$" + v.toLocaleString("en-US");
-    counter.classList.toggle("on", v > 0);
-  }
 
-  // ---------- scripted qualifying flow ----------
-  function hubChips(){
-    stage = "hubs";
-    renderHubChips();
-  }
-  function renderHubChips(){
-    var items = [];
-    items.push({ cap: selectedHubs.length
-      ? "Tap to add or remove \u2014 then continue below"
-      : "Tap all that apply" });
-    ["Marketing","Sales","Support","Website","Data & ops"].forEach(function(name){
-      items.push({ label: name, sel: selectedHubs.indexOf(name) !== -1, on: function(){
-        engage();
-        var idx = selectedHubs.indexOf(name);
-        if (idx === -1) selectedHubs.push(name); else selectedHubs.splice(idx, 1);
-        setCounter(selectedHubs.reduce(function(s, hub){ return s + (fees[hub] || 0); }, 0));
-        renderHubChips();
-      }});
-    });
-    if (selectedHubs.length) {
-      items.push({ label: "That\u2019s everything \u2192", go: true, on: function(){
-        answers.hubs = selectedHubs.join(" + ");
-        userSay(answers.hubs);
-        askContacts();
-      }});
-    } else {
-      items.push({ label: "I already have a quote", minor: true, on: function(){ engage(); userSay("I already have a quote"); setChips([]); botSay("Even better \u2014 paste it here. The line items or just the total, either works, and I\u2019ll tell you which lines move.", null, true); input.focus(); stage = null; } });
-      items.push({ label: "I don\u2019t know yet", minor: true, on: function(){ engage(); userSay("I don\u2019t know yet"); setChips([]); botSay("That\u2019s normal \u2014 most buyers don\u2019t until someone shows them. Four taps and we\u2019ll get there. Which parts of the business would you want in HubSpot?", null, true, renderHubChips); } });
-      items.push({ label: "What\u2019s the catch?", minor: true, on: function(){ engage(); userSay("What\u2019s the catch?"); setChips([]); botSay(CATCH, null, true, renderHubChips); } });
-    }
-    setChips(items);
-  }
-  function askContacts(){
-    stage = "contacts";
-    var marketing = selectedHubs.indexOf("Marketing") !== -1;
-    var q = marketing
-      ? "Roughly how big is your list \u2014 and how much of it would you actually email?"
-      : "Roughly how many contacts will live in the CRM?";
-    var helper = marketing
-      ? "Not your whole database. The part you\u2019d send a campaign to."
-      : "Good news: without Marketing Hub, contact count doesn\u2019t change the price \u2014 this just helps me scope the setup.";
-    botSay(q, helper, true, function(){
-      setChips(["Under 2,000","2,000\u201310,000","10,000\u201350,000","Not sure, that\u2019s part of the problem"].map(function(v){
-        return { label: v, on: function(){ engage(); answers.contacts = v; userSay(v); askSeats(); } };
-      }));
-    });
-  }
-  function askSeats(){
-    stage = "seats";
-    botSay("And how many people will genuinely log in every week?",
-      "Creators and editors only. Anyone who just reads dashboards gets a free seat.", true, function(){
-      setChips(["1\u20133","4\u20138","9\u201315","15+"].map(function(v){
-        return { label: v, on: function(){ engage(); answers.seats = v; userSay(v); askTiming(); } };
-      }));
-    });
-  }
-  function askTiming(){
-    stage = "timing";
-    botSay("When do you need to decide?", null, true, function(){
-      setChips(["This week","This month","This quarter","Just researching"].map(function(v){
-        return { label: v, on: function(){ engage(); answers.timing = v; userSay(v); finishQualify(); } };
-      }));
-    });
-  }
-  function finishQualify(){
-    stage = "done";
-    setChips([]);
-    var summary = "My setup: hubs \u2014 " + (answers.hubs || "unspecified") +
-      "; emailable contacts \u2014 " + (answers.contacts || "unspecified") +
-      "; weekly active users \u2014 " + (answers.seats || "unspecified") +
-      "; deciding \u2014 " + (answers.timing || "unspecified") +
-      ". Give me the full year-one estimate.";
-    sendToBot(summary, true);
-  }
   function actionChips(){
     setChips([
       { label: "Get my yes or no", go: true, on: function(){ notifyParent({ crmchat_action: "book" }); } },
@@ -355,7 +267,7 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
         el.textContent = finalText;
         messages.push({ role: "assistant", content: finalText });
         scrollDown();
-        if (stage === "done") { stage = "closed"; actionChips(); }
+        if (finalText.indexOf("Difference:") !== -1) actionChips();
         pending = false;
         sendBtn.disabled = false;
       });
@@ -373,13 +285,7 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
     if (!text || pending) return;
     input.value = "";
     finishGreetingNow();
-    stage = null; setChips([]);
-    // carry any chip answers gathered so far as context
-    var ctx = [];
-    if (answers.hubs) ctx.push("hubs: " + answers.hubs);
-    if (answers.contacts) ctx.push("contacts: " + answers.contacts);
-    if (answers.seats) ctx.push("weekly users: " + answers.seats);
-    if (ctx.length && !messages.length) text = text + " (context so far \u2014 " + ctx.join("; ") + ")";
+    setChips([]);
     sendToBot(text, false);
   }
 
@@ -389,22 +295,12 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
     greetTimers.push(setTimeout(function(){
       showTyping(false);
       typeInto(makeBubble("assistant"), M1, function(){
-        showTyping(true);
-        greetTimers.push(setTimeout(function(){
-          showTyping(false);
-          typeInto(makeBubble("assistant"), M2, function(){
-            showTyping(true);
-            greetTimers.push(setTimeout(function(){
-              showTyping(false);
-              typeInto(makeBubble("assistant"), M3, function(){
-                greetDone = true; hubChips(); startIdle();
-              });
-            }, reduced ? 0 : 700));
-          });
-        }, reduced ? 0 : 850));
+        greetDone = true;
+        startIdle();
+        input.focus();
       });
-    }, reduced ? 0 : 1000));
-    messages.push({ role: "assistant", content: M1 + "\n\n" + M2 + "\n\n" + M3 });
+    }, reduced ? 0 : 900));
+    messages.push({ role: "assistant", content: M1 });
   }
   function finishGreetingNow(){
     if (greetDone) return;
@@ -412,16 +308,13 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
     greetTimers.forEach(clearTimeout);
     if (activeTw) activeTw();
     showTyping(false);
-    var bots = msgsEl.querySelectorAll(".b.bot");
     if (!greetStarted) {
       greetStarted = true;
-      messages.push({ role: "assistant", content: M1 + "\n\n" + M2 + "\n\n" + M3 });
+      messages.push({ role: "assistant", content: M1 });
     }
-    var texts = [M1, M2, M3];
-    for (var i = 0; i < 3; i++) {
-      if (bots[i]) bots[i].textContent = texts[i];
-      else botSay(texts[i], null, false);
-    }
+    var bots = msgsEl.querySelectorAll(".b.bot");
+    if (bots.length === 0) botSay(M1, null, false);
+    else bots[0].textContent = M1;
   }
 
   // ---------- idle rotating prompts ----------
@@ -444,7 +337,7 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
   }
   promptLine.addEventListener("click", function(){
     var q = promptLine.textContent.replace(/[\u201C\u201D]/g, "");
-    finishGreetingNow(); stage = null; setChips([]);
+    finishGreetingNow(); setChips([]);
     sendToBot(q, false);
   });
 
