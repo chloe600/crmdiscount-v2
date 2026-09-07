@@ -40,9 +40,11 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
   padding:7px 14px;font-family:inherit;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .12s ease,color .12s ease}
 .chip:hover{background:var(--accent);color:#fff}
 .chip.sel{background:var(--accent);color:#fff}
-.chip.minor{border-color:var(--line);color:var(--ink-soft);font-weight:500}
+.chip.minor{border-color:var(--line);color:var(--ink-soft);font-weight:500;font-size:.78rem;padding:6px 12px}
 .chip.minor:hover{border-color:var(--accent);color:var(--accent-deep);background:var(--paper)}
-.chip.go{background:var(--accent-deep);border-color:var(--accent-deep);color:#fff}
+.chip.go{background:var(--accent-deep);border-color:var(--accent-deep);color:#fff;
+  flex:1 0 100%;justify-content:center;text-align:center;padding:11px;font-size:.88rem;margin-top:2px}
+.chips .cap{flex:1 0 100%;font-size:.72rem;color:var(--ink-soft);letter-spacing:.02em;margin-bottom:-2px}
 .prompt-line{flex:none;background:var(--wash);padding:8px 16px 0;font-size:.8rem;color:var(--ink-soft);cursor:pointer;display:none;font-style:italic}
 .prompt-line.on{display:block}
 .prompt-line:hover{color:var(--accent-deep)}
@@ -165,8 +167,15 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
   function setChips(list){
     chipsEl.innerHTML = "";
     (list || []).forEach(function(c){
+      if (c.cap) {
+        var d = document.createElement("div");
+        d.className = "cap";
+        d.textContent = c.cap;
+        chipsEl.appendChild(d);
+        return;
+      }
       var b = document.createElement("button");
-      b.className = "chip" + (c.minor ? " minor" : "") + (c.go ? " go" : "");
+      b.className = "chip" + (c.minor ? " minor" : "") + (c.go ? " go" : "") + (c.sel ? " sel" : "");
       b.textContent = c.label;
       b.addEventListener("click", function(){ c.on(b); });
       chipsEl.appendChild(b);
@@ -181,35 +190,34 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
   // ---------- scripted qualifying flow ----------
   function hubChips(){
     stage = "hubs";
-    var defs = ["Marketing","Sales","Support","Website","Data & ops"].map(function(name){
-      return { label: name, on: function(btn){
+    renderHubChips();
+  }
+  function renderHubChips(){
+    var items = [];
+    items.push({ cap: selectedHubs.length
+      ? "Tap to add or remove \u2014 then continue below"
+      : "Tap all that apply" });
+    ["Marketing","Sales","Support","Website","Data & ops"].forEach(function(name){
+      items.push({ label: name, sel: selectedHubs.indexOf(name) !== -1, on: function(){
         engage();
         var idx = selectedHubs.indexOf(name);
-        if (idx === -1) { selectedHubs.push(name); btn.classList.add("sel"); }
-        else { selectedHubs.splice(idx, 1); btn.classList.remove("sel"); }
-        setCounter(selectedHubs.reduce(function(s, h){ return s + (fees[h] || 0); }, 0));
-        ensureGoChip();
-      }};
+        if (idx === -1) selectedHubs.push(name); else selectedHubs.splice(idx, 1);
+        setCounter(selectedHubs.reduce(function(s, hub){ return s + (fees[hub] || 0); }, 0));
+        renderHubChips();
+      }});
     });
-    var minors = [
-      { label: "I already have a quote", minor: true, on: function(){ engage(); userSay("I already have a quote"); botSay("Even better \u2014 paste it here. The line items or just the total, either works, and I\u2019ll tell you which lines move.", null, true); input.focus(); stage = null; } },
-      { label: "I don\u2019t know yet", minor: true, on: function(){ engage(); userSay("I don\u2019t know yet"); botSay("That\u2019s normal \u2014 most buyers don\u2019t until someone shows them. Four taps and we\u2019ll get there. Which parts of the business would you want in HubSpot?", null, true, hubChips); } },
-      { label: "What\u2019s the catch?", minor: true, on: function(){ engage(); userSay("What\u2019s the catch?"); botSay(CATCH, null, true, function(){ hubChips(); }); } }
-    ];
-    setChips(defs.concat(minors));
-  }
-  function ensureGoChip(){
-    if (selectedHubs.length && !chipsEl.querySelector(".go")) {
-      var g = document.createElement("button");
-      g.className = "chip go"; g.textContent = "That\u2019s everything \u2192";
-      g.addEventListener("click", function(){
+    if (selectedHubs.length) {
+      items.push({ label: "That\u2019s everything \u2192", go: true, on: function(){
         answers.hubs = selectedHubs.join(" + ");
         userSay(answers.hubs);
         askContacts();
-      });
-      chipsEl.appendChild(g);
+      }});
+    } else {
+      items.push({ label: "I already have a quote", minor: true, on: function(){ engage(); userSay("I already have a quote"); setChips([]); botSay("Even better \u2014 paste it here. The line items or just the total, either works, and I\u2019ll tell you which lines move.", null, true); input.focus(); stage = null; } });
+      items.push({ label: "I don\u2019t know yet", minor: true, on: function(){ engage(); userSay("I don\u2019t know yet"); setChips([]); botSay("That\u2019s normal \u2014 most buyers don\u2019t until someone shows them. Four taps and we\u2019ll get there. Which parts of the business would you want in HubSpot?", null, true, renderHubChips); } });
+      items.push({ label: "What\u2019s the catch?", minor: true, on: function(){ engage(); userSay("What\u2019s the catch?"); setChips([]); botSay(CATCH, null, true, renderHubChips); } });
     }
-    if (!selectedHubs.length) { var g2 = chipsEl.querySelector(".go"); if (g2) g2.remove(); }
+    setChips(items);
   }
   function askContacts(){
     stage = "contacts";
