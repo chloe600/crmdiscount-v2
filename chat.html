@@ -11,27 +11,43 @@
 <style>
 :root{
   --ink:#12172B; --ink-soft:#4A5169; --accent:#4F46E5; --accent-deep:#4338CA;
-  --paper:#FFFFFF; --wash:#F6F7FB; --line:#E4E7F0;
+  --paper:#FFFFFF; --wash:#F6F7FB; --line:#E4E7F0; --tint:#EEEDFB; --green:#1FA97C;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%}
 body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--paper);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
 .head{background:var(--ink);color:#fff;padding:14px 18px;display:flex;align-items:center;gap:12px;flex:none}
 .head .dot{width:34px;height:34px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;flex:none}
-.head strong{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:.98rem;font-weight:800;line-height:1.2}
+.head strong{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:.98rem;font-weight:800;line-height:1.2;font-variant-ligatures:none}
 .head small{display:block;font-size:.7rem;color:rgba(255,255,255,.65);letter-spacing:.04em}
+.counter{display:none;flex:none;align-items:center;justify-content:space-between;gap:10px;background:var(--tint);border-bottom:1px solid var(--line);padding:8px 16px;font-size:.78rem;color:var(--ink-soft)}
+.counter.on{display:flex}
+.counter b{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;color:var(--accent-deep);font-size:.95rem;font-variant-ligatures:none}
 .msgs{flex:1;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:10px;background:var(--wash)}
-.b{max-width:86%;padding:10px 14px;border-radius:14px;font-size:.9rem;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}
+.b{max-width:88%;padding:10px 14px;border-radius:14px;font-size:.9rem;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}
 .b.bot{align-self:flex-start;background:var(--paper);border:1px solid var(--line);color:var(--ink);border-bottom-left-radius:4px}
 .b.me{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:4px}
+.b .helper{display:block;margin-top:6px;font-size:.76rem;color:var(--ink-soft)}
 .typing{align-self:flex-start;background:var(--paper);border:1px solid var(--line);border-radius:14px;border-bottom-left-radius:4px;padding:12px 14px;display:none;gap:4px}
 .typing.on{display:flex}
 .typing i{width:6px;height:6px;border-radius:50%;background:var(--ink-soft);opacity:.4;animation:blink 1.2s infinite}
 .typing i:nth-child(2){animation-delay:.2s}
 .typing i:nth-child(3){animation-delay:.4s}
 @keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:.9}}
+.chips{flex:none;display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 0;background:var(--wash)}
+.chips:empty{display:none}
+.chip{border:1.5px solid var(--accent);background:var(--paper);color:var(--accent-deep);border-radius:999px;
+  padding:7px 14px;font-family:inherit;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .12s ease,color .12s ease}
+.chip:hover{background:var(--accent);color:#fff}
+.chip.sel{background:var(--accent);color:#fff}
+.chip.minor{border-color:var(--line);color:var(--ink-soft);font-weight:500}
+.chip.minor:hover{border-color:var(--accent);color:var(--accent-deep);background:var(--paper)}
+.chip.go{background:var(--accent-deep);border-color:var(--accent-deep);color:#fff}
+.prompt-line{flex:none;background:var(--wash);padding:8px 16px 0;font-size:.8rem;color:var(--ink-soft);cursor:pointer;display:none;font-style:italic}
+.prompt-line.on{display:block}
+.prompt-line:hover{color:var(--accent-deep)}
 .inrow{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:var(--paper);flex:none}
-.in{flex:1;border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;font-family:inherit;font-size:.92rem;color:var(--ink);outline:none;resize:none;max-height:96px}
+.in{flex:1;border:1.5px solid var(--line);border-radius:12px;padding:11px 14px;font-family:inherit;font-size:.9rem;color:var(--ink);outline:none;resize:none;max-height:96px}
 .in:focus{border-color:var(--accent)}
 .send{background:var(--accent);border:none;border-radius:12px;color:#fff;width:46px;flex:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .send:disabled{opacity:.5;cursor:default}
@@ -46,13 +62,16 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
   <span class="dot">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
   </span>
-  <span><strong>CRMdiscount assistant</strong><small>AI &middot; instant answers &middot; human follow-up on email</small></span>
+  <span><strong>CRMdiscount assistant</strong><small>AI &middot; instant answers &middot; every figure checkable</small></span>
 </div>
+<div class="counter" id="counter"><span>Onboarding on your setup so far</span><b id="counterVal">$0</b></div>
 <div class="msgs" id="msgs">
   <div class="typing" id="typing"><i></i><i></i><i></i></div>
 </div>
+<div class="prompt-line" id="promptLine"></div>
+<div class="chips" id="chips"></div>
 <div class="inrow">
-  <textarea class="in" id="inBox" rows="1" maxlength="1000" placeholder="Type here&hellip;" aria-label="Your message"></textarea>
+  <textarea class="in" id="inBox" rows="1" maxlength="1000" placeholder="Paste your HubSpot quote, or tell me what you're being offered&hellip;" aria-label="Your message"></textarea>
   <button class="send" id="sendBtn" aria-label="Send">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13 M22 2 15 22 11 13 2 9z"/></svg>
   </button>
@@ -63,165 +82,392 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
 (function(){
   var ENDPOINT = "/api/chat";
   var SESSION_ID = Math.random().toString(36).slice(2) + Date.now().toString(36);
-  var G1 = "Hi \u2014 I\u2019m the CRMdiscount AI assistant.";
-  var G2 = "Tell me four things and I\u2019ll give you an itemized year-one estimate:\n\n1. Which hubs you\u2019re considering\n2. Roughly how many contacts\n3. How many people will genuinely log in weekly\n4. When you need to decide\n\nOr just ask me anything about HubSpot pricing.";
+  var EMAIL_RE = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
+  var FREE_MAIL = ["gmail.com","yahoo.com","outlook.com","hotmail.com","aol.com","icloud.com","proton.me","protonmail.com","gmx.com","yandex.com","mail.com","live.com","msn.com","ymail.com"];
+  var awaitingEmail = false, emailGiven = false, emailNudged = false, userMsgCount = 0, FREE_LIMIT = 15;
 
-  var msgsEl = document.getElementById("msgs");
-  var typing = document.getElementById("typing");
-  var input = document.getElementById("inBox");
-  var sendBtn = document.getElementById("sendBtn");
+  // ---------- copy ----------
+  var M1 = "I\u2019m an AI on an independent site, built by RevOps operators whose agency is a certified HubSpot partner \u2014 disclosed, because that\u2019s how this gets paid.";
+  var M2 = "Most first-time HubSpot quotes run about a third bigger than they need to \u2014 on a 12-person team, that\u2019s ~$9,900 in year one.";
+  var M3 = "Which hubs are you looking at?";
+  var CATCH = "No catch \u2014 an incentive, disclosed. CRMdiscount is independent, but the operators behind it run a certified partner agency: if your deal qualifies and you choose them, delivering your onboarding is paid work for that agency. That\u2019s exactly why everything here is built to be checked without us \u2014 the chat and the estimate are free, and yours to take straight to your own HubSpot rep.";
+  var IDLE_PROMPTS = [
+    "\u201CIs the onboarding fee actually mandatory?\u201D",
+    "\u201CWhat does Marketing Hub Pro really cost with 8,000 contacts?\u201D",
+    "\u201CHow many seats do I actually need?\u201D",
+    "\u201CCan I negotiate with HubSpot directly?\u201D",
+    "\u201CIs Professional worth it over Starter?\u201D",
+    "\u201CWhat\u2019s the catch here?\u201D"
+  ];
+  var PROACTIVE = {
+    fees:    "Want me to tell you which of these fees applies to your setup?",
+    compare: "That\u2019s a 12-person team. Want the version for yours?",
+    faq:     "Faster to just ask me.",
+    deep:    "Still here \u2014 what\u2019s the actual question?",
+    exit:    "Before you go \u2014 the onboarding fee is only movable until you sign. Two minutes and you\u2019ll know what yours is."
+  };
+
+  // ---------- state ----------
+  var msgsEl = document.getElementById("msgs"), typing = document.getElementById("typing");
+  var input = document.getElementById("inBox"), sendBtn = document.getElementById("sendBtn");
+  var chipsEl = document.getElementById("chips"), promptLine = document.getElementById("promptLine");
+  var counter = document.getElementById("counter"), counterVal = document.getElementById("counterVal");
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var messages = [];           // context sent to the bot
+  var pending = false, engagedFired = false, userEngaged = false;
+  var stage = null;            // hubs -> contacts -> seats -> timing -> done
+  var answers = {};
+  var selectedHubs = [];
+  var fees = { "Marketing": 3000, "Sales": 1500, "Support": 1500, "Website": 0, "Data & ops": 0 };
+  var feeTotal = 0;
+  var loadedAt = Date.now(), proactiveShown = 0;
+  var greetStarted = false, greetDone = false, greetTimers = [], activeTw = null;
 
-  var messages = [];
-  var pending = false;
-  var engagedFired = false;
-  var greetTimers = [];
-  var greetingDone = false;
-  var activeTypewriter = null;
-
-  function notifyParent(evt){
-    try { if (window.parent && window.parent !== window) window.parent.postMessage({ crmchat_event: evt }, "*"); } catch(e){}
-  }
+  function notifyParent(o){ try { if (window.parent !== window) window.parent.postMessage(o, "*"); } catch(e){} }
   function scrollDown(){ msgsEl.scrollTop = msgsEl.scrollHeight; }
   function showTyping(on){ typing.classList.toggle("on", on); if(on) scrollDown(); }
-
+  function engage(){
+    userEngaged = true;
+    stopIdle();
+    if (!engagedFired) { engagedFired = true; notifyParent({ crmchat_event: "chat_engaged" }); }
+  }
   function makeBubble(role){
     var d = document.createElement("div");
     d.className = "b " + (role === "assistant" ? "bot" : "me");
     msgsEl.insertBefore(d, typing);
     return d;
   }
-
-  // Types text into a bubble character-chunk by chunk; returns a cancel/finish function
   function typeInto(el, text, done){
     if (reduced) { el.textContent = text; scrollDown(); if (done) done(); return function(){}; }
-    var i = 0;
-    var chunk = text.length > 400 ? 6 : 3;   // long replies type faster
+    var i = 0, chunk = text.length > 400 ? 7 : 3;
     var iv = setInterval(function(){
       i = Math.min(i + chunk, text.length);
-      el.textContent = text.slice(0, i);
-      scrollDown();
-      if (i >= text.length) { clearInterval(iv); activeTypewriter = null; if (done) done(); }
-    }, 24);
-    var finish = function(){
-      clearInterval(iv);
-      el.textContent = text;
-      scrollDown();
-      activeTypewriter = null;
-      if (done) done();
-    };
-    activeTypewriter = finish;
-    return finish;
+      el.textContent = text.slice(0, i); scrollDown();
+      if (i >= text.length) { clearInterval(iv); activeTw = null; if (done) done(); }
+    }, 22);
+    var fin = function(){ clearInterval(iv); el.textContent = text; scrollDown(); activeTw = null; if (done) done(); };
+    activeTw = fin; return fin;
+  }
+  function botSay(text, helper, animate, done){
+    var el = makeBubble("assistant");
+    if (helper) {
+      var main = document.createTextNode(""); el.appendChild(main);
+      var h = document.createElement("span"); h.className = "helper"; h.textContent = helper;
+      if (animate && !reduced) {
+        typeInto(el, text, function(){ el.appendChild(h); scrollDown(); if (done) done(); });
+        return;
+      }
+      el.textContent = text; el.appendChild(h); scrollDown(); if (done) done(); return;
+    }
+    if (animate) { typeInto(el, text, done); } else { el.textContent = text; scrollDown(); if (done) done(); }
+  }
+  function userSay(text){ makeBubble("user").textContent = text; scrollDown(); }
+  function setChips(list){
+    chipsEl.innerHTML = "";
+    (list || []).forEach(function(c){
+      var b = document.createElement("button");
+      b.className = "chip" + (c.minor ? " minor" : "") + (c.go ? " go" : "");
+      b.textContent = c.label;
+      b.addEventListener("click", function(){ c.on(b); });
+      chipsEl.appendChild(b);
+    });
+  }
+  function setCounter(v){
+    feeTotal = v;
+    counterVal.textContent = "$" + v.toLocaleString("en-US");
+    counter.classList.toggle("on", v > 0);
   }
 
-  function addBubble(role, text, animate){
-    var el = makeBubble(role);
-    if (animate) { typeInto(el, text); } else { el.textContent = text; }
-    scrollDown();
+  // ---------- scripted qualifying flow ----------
+  function hubChips(){
+    stage = "hubs";
+    var defs = ["Marketing","Sales","Support","Website","Data & ops"].map(function(name){
+      return { label: name, on: function(btn){
+        engage();
+        var idx = selectedHubs.indexOf(name);
+        if (idx === -1) { selectedHubs.push(name); btn.classList.add("sel"); }
+        else { selectedHubs.splice(idx, 1); btn.classList.remove("sel"); }
+        setCounter(selectedHubs.reduce(function(s, h){ return s + (fees[h] || 0); }, 0));
+        ensureGoChip();
+      }};
+    });
+    var minors = [
+      { label: "I already have a quote", minor: true, on: function(){ engage(); userSay("I already have a quote"); botSay("Even better \u2014 paste it here. The line items or just the total, either works, and I\u2019ll tell you which lines move.", null, true); input.focus(); stage = null; } },
+      { label: "I don\u2019t know yet", minor: true, on: function(){ engage(); userSay("I don\u2019t know yet"); botSay("That\u2019s normal \u2014 most buyers don\u2019t until someone shows them. Four taps and we\u2019ll get there. Which parts of the business would you want in HubSpot?", null, true, hubChips); } },
+      { label: "What\u2019s the catch?", minor: true, on: function(){ engage(); userSay("What\u2019s the catch?"); botSay(CATCH, null, true, function(){ hubChips(); }); } }
+    ];
+    setChips(defs.concat(minors));
   }
-
-  // ---- Arrival choreography: agent "types" the greeting in two beats ----
-  function runGreeting(){
-    showTyping(true);
-    greetTimers.push(setTimeout(function(){
-      showTyping(false);
-      var b1 = makeBubble("assistant");
-      typeInto(b1, G1, function(){
-        showTyping(true);
-        greetTimers.push(setTimeout(function(){
-          showTyping(false);
-          var b2 = makeBubble("assistant");
-          typeInto(b2, G2, function(){ greetingDone = true; });
-        }, reduced ? 0 : 850));
+  function ensureGoChip(){
+    if (selectedHubs.length && !chipsEl.querySelector(".go")) {
+      var g = document.createElement("button");
+      g.className = "chip go"; g.textContent = "That\u2019s everything \u2192";
+      g.addEventListener("click", function(){
+        answers.hubs = selectedHubs.join(" + ");
+        userSay(answers.hubs);
+        askContacts();
       });
-    }, reduced ? 0 : 1100));
-    messages.push({ role: "assistant", content: G1 + "\n\n" + G2 });
+      chipsEl.appendChild(g);
+    }
+    if (!selectedHubs.length) { var g2 = chipsEl.querySelector(".go"); if (g2) g2.remove(); }
+  }
+  function askContacts(){
+    stage = "contacts";
+    var marketing = selectedHubs.indexOf("Marketing") !== -1;
+    var q = marketing
+      ? "Roughly how big is your list \u2014 and how much of it would you actually email?"
+      : "Roughly how many contacts will live in the CRM?";
+    var helper = marketing
+      ? "Not your whole database. The part you\u2019d send a campaign to."
+      : "Good news: without Marketing Hub, contact count doesn\u2019t change the price \u2014 this just helps me scope the setup.";
+    botSay(q, helper, true, function(){
+      setChips(["Under 2,000","2,000\u201310,000","10,000\u201350,000","Not sure, that\u2019s part of the problem"].map(function(v){
+        return { label: v, on: function(){ engage(); answers.contacts = v; userSay(v); askSeats(); } };
+      }));
+    });
+  }
+  function askSeats(){
+    stage = "seats";
+    botSay("And how many people will genuinely log in every week?",
+      "Creators and editors only. Anyone who just reads dashboards gets a free seat.", true, function(){
+      setChips(["1\u20133","4\u20138","9\u201315","15+"].map(function(v){
+        return { label: v, on: function(){ engage(); answers.seats = v; userSay(v); askTiming(); } };
+      }));
+    });
+  }
+  function askTiming(){
+    stage = "timing";
+    botSay("When do you need to decide?", null, true, function(){
+      setChips(["This week","This month","This quarter","Just researching"].map(function(v){
+        return { label: v, on: function(){ engage(); answers.timing = v; userSay(v); finishQualify(); } };
+      }));
+    });
+  }
+  function finishQualify(){
+    stage = "done";
+    setChips([]);
+    var summary = "My setup: hubs \u2014 " + (answers.hubs || "unspecified") +
+      "; emailable contacts \u2014 " + (answers.contacts || "unspecified") +
+      "; weekly active users \u2014 " + (answers.seats || "unspecified") +
+      "; deciding \u2014 " + (answers.timing || "unspecified") +
+      ". Give me the full year-one estimate.";
+    sendToBot(summary, true);
+  }
+  function actionChips(){
+    setChips([
+      { label: "Get my yes or no", go: true, on: function(){ notifyParent({ crmchat_action: "book" }); } },
+      { label: "Email me this breakdown", on: function(){ sendToBot("Email me this breakdown", false); } }
+    ]);
   }
 
-  // If the visitor starts before the show finishes, cut to the end instantly
-  function finishGreetingNow(){
-    if (greetingDone) return;
-    greetingDone = true;
-    if (!greetStarted) {
-      greetStarted = true;
-      messages.push({ role: "assistant", content: G1 + "\n\n" + G2 });
-      addBubble("assistant", G1, false);
-      addBubble("assistant", G2, false);
+  // ---------- lead capture (works without the model) ----------
+  function isFreeMail(email){
+    var d = email.split("@")[1].toLowerCase();
+    return FREE_MAIL.some(function(f){ return d === f; });
+  }
+  function buildTranscript(){
+    return messages.map(function(m){ return (m.role === "user" ? "Visitor: " : "Assistant: ") + m.content; }).join("\n\n").slice(0, 45000);
+  }
+  function captureLead(email){
+    fetch("/api/lead", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email, transcript: buildTranscript(), session: SESSION_ID })
+    })
+    .then(function(r){ if (!r.ok) throw new Error("lead " + r.status); return r.json(); })
+    .then(function(){
+      awaitingEmail = false; emailGiven = true;
+      botSay("Done \u2014 a human reviews this conversation and sends your itemized estimate to " + email + " today. Anything else you want to ask meanwhile?", null, true);
+    })
+    .catch(function(){
+      botSay("That didn\u2019t save on my end \u2014 email team@crmdiscount.ai directly and you\u2019ll get the estimate the same working day.", null, true);
+    });
+  }
+  function handleAwaitingEmail(text){
+    userSay(text);
+    messages.push({ role: "user", content: text });
+    var m = text.match(EMAIL_RE);
+    if (!m) {
+      botSay("Just the email and I\u2019ll take care of the rest \u2014 like name@yourcompany.com.", null, true);
       return;
     }
-    greetTimers.forEach(clearTimeout);
-    if (activeTypewriter) activeTypewriter();
-    showTyping(false);
-    var bots = msgsEl.querySelectorAll(".b.bot");
-    if (bots.length === 0) { addBubble("assistant", G1, false); addBubble("assistant", G2, false); }
-    else if (bots.length === 1) { bots[0].textContent = G1; addBubble("assistant", G2, false); }
+    if (isFreeMail(m[0])) {
+      botSay("That looks like a personal address \u2014 the written estimate only goes to company inboxes. What\u2019s your work email? (name@yourcompany.com)", null, true);
+      return;
+    }
+    captureLead(m[0]);
   }
 
-  function send(){
+  // ---------- bot round trip ----------
+  function sendToBot(text, hidden){
     if (pending) return;
-    var text = input.value.trim();
-    if (!text) return;
-    finishGreetingNow();
-    input.value = "";
+    if (awaitingEmail) { handleAwaitingEmail(text); return; }
+    var em = text.match(EMAIL_RE);
+    if (em && !isFreeMail(em[0])) emailGiven = true;
+    userMsgCount++;
+    if (!emailGiven && userMsgCount > FREE_LIMIT) {
+      awaitingEmail = true;
+      if (!hidden) { userSay(text); messages.push({ role: "user", content: text }); }
+      botSay("Happy to keep going \u2014 drop your work email first and I\u2019ll also send you the full summary of everything so far.", null, true);
+      return;
+    }
+    if (!hidden) userSay(text);
     messages.push({ role: "user", content: text });
-    addBubble("user", text, false);
-    if (!engagedFired) { engagedFired = true; notifyParent("chat_engaged"); }
-    pending = true;
-    sendBtn.disabled = true;
+    engage();
+    pending = true; sendBtn.disabled = true;
     var t0 = Date.now();
     showTyping(true);
-
     fetch(ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ messages: messages.slice(-24), session: SESSION_ID })
     })
-    .then(function(r){ if (!r.ok) throw new Error("http " + r.status); return r.json(); })
-    .then(function(data){
-      var reply = (data && data.reply) ? String(data.reply) : "";
-      if (!reply) throw new Error("empty");
-      messages.push({ role: "assistant", content: reply });
-      return reply;
-    })
-    .catch(function(){
-      return "Sorry \u2014 I\u2019m having trouble connecting right now. Email team@crmdiscount.ai with your four details and you\u2019ll get the estimate the same working day.";
-    })
-    .then(function(replyText){
-      // keep the dots up for at least 900ms so the agent visibly "thinks"
-      var dwell = Math.max(0, (reduced ? 0 : 900) - (Date.now() - t0));
-      setTimeout(function(){
-        showTyping(false);
-        addBubble("assistant", replyText, true);
+    .then(function(r){
+      if (!r.ok || !r.body) throw new Error("http " + (r ? r.status : "?"));
+      showTyping(false);
+      var el = makeBubble("assistant");
+      var reader = r.body.getReader();
+      var dec = new TextDecoder();
+      var raw = "";
+      function strip(t){
+        return t.replace(/\*\*/g, "").replace(/^#{1,4}\s+/gm, "").replace(/^\s*[\*\-]\s+/gm, "\u2013 ");
+      }
+      function pump(){
+        return reader.read().then(function(x){
+          if (x.done) return;
+          raw += dec.decode(x.value, { stream: true });
+          el.textContent = strip(raw);
+          scrollDown();
+          return pump();
+        });
+      }
+      return pump().then(function(){
+        var finalText = strip(raw).trim();
+        if (!finalText) { el.remove(); throw new Error("empty"); }
+        el.textContent = finalText;
+        messages.push({ role: "assistant", content: finalText });
+        scrollDown();
+        if (stage === "done") { stage = "closed"; actionChips(); }
         pending = false;
         sendBtn.disabled = false;
-      }, dwell);
+      });
+    })
+    .catch(function(){
+      showTyping(false);
+      awaitingEmail = true;
+      botSay("I can\u2019t reach the pricing engine right now \u2014 leave your work email and a human will send your itemized estimate today.", null, true);
+      pending = false;
+      sendBtn.disabled = false;
     });
   }
+  function send(){
+    var text = input.value.trim();
+    if (!text || pending) return;
+    input.value = "";
+    finishGreetingNow();
+    stage = null; setChips([]);
+    // carry any chip answers gathered so far as context
+    var ctx = [];
+    if (answers.hubs) ctx.push("hubs: " + answers.hubs);
+    if (answers.contacts) ctx.push("contacts: " + answers.contacts);
+    if (answers.seats) ctx.push("weekly users: " + answers.seats);
+    if (ctx.length && !messages.length) text = text + " (context so far \u2014 " + ctx.join("; ") + ")";
+    sendToBot(text, false);
+  }
 
+  // ---------- greeting choreography ----------
+  function runGreeting(){
+    showTyping(true);
+    greetTimers.push(setTimeout(function(){
+      showTyping(false);
+      typeInto(makeBubble("assistant"), M1, function(){
+        showTyping(true);
+        greetTimers.push(setTimeout(function(){
+          showTyping(false);
+          typeInto(makeBubble("assistant"), M2, function(){
+            showTyping(true);
+            greetTimers.push(setTimeout(function(){
+              showTyping(false);
+              typeInto(makeBubble("assistant"), M3, function(){
+                greetDone = true; hubChips(); startIdle();
+              });
+            }, reduced ? 0 : 700));
+          });
+        }, reduced ? 0 : 850));
+      });
+    }, reduced ? 0 : 1000));
+    messages.push({ role: "assistant", content: M1 + "\n\n" + M2 + "\n\n" + M3 });
+  }
+  function finishGreetingNow(){
+    if (greetDone) return;
+    greetDone = true;
+    greetTimers.forEach(clearTimeout);
+    if (activeTw) activeTw();
+    showTyping(false);
+    var bots = msgsEl.querySelectorAll(".b.bot");
+    if (!greetStarted) {
+      greetStarted = true;
+      messages.push({ role: "assistant", content: M1 + "\n\n" + M2 + "\n\n" + M3 });
+    }
+    var texts = [M1, M2, M3];
+    for (var i = 0; i < 3; i++) {
+      if (bots[i]) bots[i].textContent = texts[i];
+      else botSay(texts[i], null, false);
+    }
+  }
+
+  // ---------- idle rotating prompts ----------
+  var idleTimer = null, idleCycle = null, idleIdx = 0;
+  function startIdle(){
+    if (userEngaged) return;
+    idleTimer = setTimeout(function(){
+      if (userEngaged) return;
+      promptLine.classList.add("on");
+      promptLine.textContent = IDLE_PROMPTS[0];
+      idleCycle = setInterval(function(){
+        idleIdx = (idleIdx + 1) % IDLE_PROMPTS.length;
+        promptLine.textContent = IDLE_PROMPTS[idleIdx];
+      }, 7000);
+    }, 20000);
+  }
+  function stopIdle(){
+    clearTimeout(idleTimer); clearInterval(idleCycle);
+    promptLine.classList.remove("on");
+  }
+  promptLine.addEventListener("click", function(){
+    var q = promptLine.textContent.replace(/[\u201C\u201D]/g, "");
+    finishGreetingNow(); stage = null; setChips([]);
+    sendToBot(q, false);
+  });
+
+  // ---------- proactive messages (capped) ----------
+  function maybeProactive(key){
+    if (userEngaged) return;
+    if (Date.now() - loadedAt < 30000) return;
+    if (proactiveShown >= 2) return;
+    if (!PROACTIVE[key]) return;
+    proactiveShown++;
+    var line = PROACTIVE[key]; delete PROACTIVE[key];
+    botSay(line, null, true);
+  }
+  window.addEventListener("message", function(e){
+    if (e.data && e.data.crmchat_prompt) maybeProactive(e.data.crmchat_prompt);
+  });
+
+  // ---------- wire ----------
   sendBtn.addEventListener("click", send);
   input.addEventListener("keydown", function(e){
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
   });
 
-  // Start the greeting only when the chat is actually visible to the visitor
-  // (inside an iframe, IntersectionObserver measures against the top page's viewport)
-  var greetStarted = false;
-  function startGreetingOnce(){
-    if (greetStarted) return;
-    greetStarted = true;
-    runGreeting();
-  }
+  var started = false;
+  function startOnce(){ if (started) return; started = true; greetStarted = true; runGreeting(); }
   if ("IntersectionObserver" in window) {
     var io = new IntersectionObserver(function(entries){
-      if (entries.some(function(e){ return e.isIntersecting; })) {
-        io.disconnect();
-        startGreetingOnce();
-      }
+      if (entries.some(function(en){ return en.isIntersecting; })) { io.disconnect(); startOnce(); }
     }, { threshold: 0.35 });
     io.observe(document.body);
-  } else {
-    startGreetingOnce();
-  }
+  } else { startOnce(); }
 })();
 </script>
 </body>
