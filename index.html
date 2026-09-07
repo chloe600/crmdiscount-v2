@@ -87,9 +87,9 @@ a{color:inherit}
 .cta:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .cta svg{flex:none}
 .cta-note{display:block;margin-top:12px;font-size:.82rem;color:var(--ink-soft)}
-.cta-ghost{display:inline-flex;align-items:center;gap:8px;margin-top:16px;font-weight:600;font-size:.95rem;color:var(--ink);
-  border:1.5px solid var(--ink);border-radius:10px;padding:11px 20px;text-decoration:none;transition:background .15s ease,color .15s ease}
-.cta-ghost:hover{background:var(--ink);color:#fff}
+.cta-ghost{display:inline-flex;align-items:center;gap:8px;margin-top:16px;font-weight:600;font-size:.95rem;color:#fff;
+  background:var(--accent);border:1.5px solid var(--accent);border-radius:10px;padding:11px 20px;text-decoration:none;transition:background .15s ease,border-color .15s ease}
+.cta-ghost:hover{background:var(--accent-deep);border-color:var(--accent-deep)}
 
 /* Signature visual: year-one estimate coupon card */
 .result-card{
@@ -278,7 +278,7 @@ footer a{color:var(--ink-soft)}
   .hero .chat-frame-hero{order:3;margin:0 0 32px;max-width:520px;width:100%}
   .hero .lead{order:4}
   .hero .cta-note{order:5}
-  .hero .cta-ghost{order:6;align-self:start;background:var(--accent);border-color:var(--accent);color:#fff;
+  .hero .cta-ghost{order:6;justify-self:start;width:auto;background:var(--accent);border-color:var(--accent);color:#fff;
     font-size:.78rem;padding:7px 13px;border-radius:8px;gap:6px;margin-top:12px}
   .hero .cta-ghost svg{width:13px;height:13px}
   .hero .cta-ghost:hover{background:var(--accent-deep);border-color:var(--accent-deep)}
