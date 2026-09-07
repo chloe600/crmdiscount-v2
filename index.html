@@ -14,13 +14,15 @@
 <meta property="og:description" content="An independent HubSpot pricing check — what year one should actually cost, free, in a two-minute chat. The estimate is yours to negotiate with either way.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Crect x='2' y='6' width='26' height='18' rx='4' fill='%2312172B'/%3E%3Ccircle cx='10' cy='15' r='3.4' fill='none' stroke='%234F46E5' stroke-width='2'/%3E%3Cpath d='M17 20 L23 10' stroke='%234F46E5' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='17.5' cy='11.5' r='1.6' fill='%234F46E5'/%3E%3Ccircle cx='22.5' cy='18.5' r='1.6' fill='%234F46E5'/%3E%3C/svg%3E">
 
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-T832KNFG');</script>
-<!-- End Google Tag Manager -->
+<!-- Google tag (gtag.js) — GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4J5TL44MW9"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4J5TL44MW9');
+</script>
+<!-- End Google tag -->
 
 <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -341,10 +343,7 @@ details[open]{box-shadow:0 1px 2px rgba(18,23,43,.05),0 14px 32px rgba(18,23,43,
 </style>
 </head>
 <body>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T832KNFG"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
+
 
 <div class="topbar">
   <div class="wrap">
@@ -625,10 +624,7 @@ var BOOKING_URL = "https://calendly.com/team-crmdiscount/20min";
 
 (function(){
   function push(evt, extra){
-    window.dataLayer = window.dataLayer || [];
-    var o = { event: evt };
-    if (extra) for (var k in extra) o[k] = extra[k];
-    window.dataLayer.push(o);
+    if (typeof gtag === "function") gtag("event", evt, extra || {});
   }
   var bookingReady = /^https:\/\//i.test(BOOKING_URL) && BOOKING_URL.indexOf("REPLACE") === -1;
   var isCalendly = /^https:\/\/calendly\.com\//i.test(BOOKING_URL);
