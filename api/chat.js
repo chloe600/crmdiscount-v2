@@ -110,7 +110,7 @@ export default async function handler(req, res) {
     if (!upstream.ok || !upstream.body) {
       const detail = await upstream.text();
       console.error('Anthropic API error', upstream.status, detail.slice(0, 500));
-      return res.status(502).json({ error: 'upstream_error' });
+      return res.status(502).json({ error: 'upstream_error', status: upstream.status, detail: detail.slice(0, 200) });
     }
 
     // Stream token deltas straight through to the browser
@@ -121,22 +121,49 @@ export default async function handler(req, res) {
     let full = '';
     let buf = '';
     const decoder = new TextDecoder();
-    for await (const chunk of upstream.body) {
-      buf += decoder.decode(chunk, { stream: true });
-      let nl;
-      while ((nl = buf.indexOf('\n')) !== -1) {
-        const line = buf.slice(0, nl).trim();
-        buf = buf.slice(nl + 1);
-        if (!line.startsWith('data:')) continue;
-        const payload = line.slice(5).trim();
-        if (!payload || payload === '[DONE]') continue;
-        try {
-          const ev = JSON.parse(payload);
-          if (ev.type === 'content_block_delta' && ev.delta && typeof ev.delta.text === 'string') {
-            full += ev.delta.text;
-            res.write(ev.delta.text);
-          }
-        } catch (parseErr) { /* keepalives / other event types */ }
+    function handleLine(line) {
+      line = line.trim();
+      if (!line.startsWith('data:')) return;
+      const payload = line.slice(5).trim();
+      if (!payload || payload === '[DONE]') return;
+      try {
+        const ev = JSON.parse(payload);
+        if (ev.type === 'content_block_delta' && ev.delta && typeof ev.delta.text === 'string') {
+          full += ev.delta.text;
+          res.write(ev.delta.text);
+        }
+      } catch (parseErr) { /* keepalives / other event types */ }
+    }
+    try {
+      if (typeof upstream.body.getReader === 'function') {
+        const reader = upstream.body.getReader();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value, { stream: true });
+          let nl;
+          while ((nl = buf.indexOf('\n')) !== -1) { handleLine(buf.slice(0, nl)); buf = buf.slice(nl + 1); }
+        }
+      } else {
+        for await (const chunk of upstream.body) {
+          buf += decoder.decode(chunk, { stream: true });
+          let nl;
+          while ((nl = buf.indexOf('\n')) !== -1) { handleLine(buf.slice(0, nl)); buf = buf.slice(nl + 1); }
+        }
+      }
+      if (buf.trim()) handleLine(buf);
+    } catch (streamErr) {
+      console.error('stream read failed, falling back to non-stream', streamErr);
+      if (!full) {
+        // Nothing sent yet: do a plain (non-streaming) completion instead
+        const again = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+          body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 900, system: SYSTEM_PROMPT, messages: merged })
+        });
+        const data = await again.json();
+        full = (data.content || []).filter(function (b) { return b.type === 'text'; }).map(function (b) { return b.text; }).join('\n').trim();
+        res.write(full);
       }
     }
 
