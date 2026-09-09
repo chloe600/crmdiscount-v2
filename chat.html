@@ -293,8 +293,8 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
     })
     .catch(function(){
       showTyping(false);
-      awaitingEmail = true;
-      botSay("I can\u2019t reach the pricing engine right now \u2014 leave your work email and a human will send your itemized estimate today.", null, true);
+      messages.pop(); // drop the unanswered turn so a retry doesn't double it
+      botSay("Give me a moment \u2014 the pricing engine didn\u2019t respond. Send that again in a few seconds.", null, true);
       pending = false;
       sendBtn.disabled = false;
     });
