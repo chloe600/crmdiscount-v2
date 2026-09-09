@@ -274,9 +274,14 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
     });
     B.rows.forEach(function(rb, j){ if (!usedB[j]) merged.push({ lbl: rb.lbl, a: "\u2014", b: rb.amt, blbl: rb.lbl }); });
     var n = function(s){ return parseInt(String(s || "").replace(/[^\d]/g, ""), 10) || 0; };
-    var diffAmt = money(diffLine) || "", diffPct = (diffLine.match(/(\d+)\s?%/) || [])[1];
-    if (!diffAmt && A.total && B.total) diffAmt = "$" + (n(A.total) - n(B.total)).toLocaleString("en-US");
-    if (!diffPct && A.total && B.total && n(A.total)) diffPct = Math.round((n(A.total) - n(B.total)) / n(A.total) * 100);
+    // Trust the rows, not the stated totals: recompute each column's total from its line amounts
+    var sumA = 0, sumB = 0, okA = true, okB = true;
+    merged.forEach(function(r){ if (/^\$/.test(r.a)) sumA += n(r.a); else if (r.a !== "\u2014") okA = false; if (/^\$/.test(r.b)) sumB += n(r.b); else if (r.b !== "\u2014") okB = false; });
+    if (okA && sumA && Math.abs(sumA - n(A.total)) > 1) A.total = "$" + sumA.toLocaleString("en-US");
+    if (okB && sumB && Math.abs(sumB - n(B.total)) > 1) B.total = "$" + sumB.toLocaleString("en-US");
+    var diffAmt = "", diffPct = "";
+    if (A.total && B.total) { diffAmt = "$" + (n(A.total) - n(B.total)).toLocaleString("en-US"); diffPct = n(A.total) ? Math.round((n(A.total) - n(B.total)) / n(A.total) * 100) : ""; }
+    else { diffAmt = money(diffLine) || ""; diffPct = (diffLine.match(/(\d+)\s?%/) || [])[1]; }
     var hasZeroOnboarding = merged.some(function(r){ return /onboard/i.test(r.lbl + " " + r.blbl) && /^\$0/.test(r.b); });
     var tier = "";
     if (multi) { var joined = A.rows.map(function(r){ return r.lbl; }).join(" "); tier = /enterprise/i.test(joined) ? " \u2014 Enterprise" : /professional|\bpro\b/i.test(joined) ? " \u2014 Professional" : /starter/i.test(joined) ? " \u2014 Starter" : ""; }
