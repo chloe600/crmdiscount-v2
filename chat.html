@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>CRMdiscount AI Assistant</title>
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -79,6 +79,8 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
 .foot{flex:none;text-align:center;font-size:.66rem;color:var(--ink-soft);padding:8px 12px;background:var(--paper)}
 @media (prefers-reduced-motion:reduce){.typing i{animation:none;opacity:.6}}
 :focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
+html,body{touch-action:manipulation;overscroll-behavior:contain}
+@media (hover:none) and (pointer:coarse){ .in{font-size:16px} }
 </style>
 </head>
 <body>
@@ -209,32 +211,49 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
     return { lbl: lbl.replace(/[,\s:]+$/, ""), amt: amt, key: rowKey(lbl) };
   }
   function renderEstimate(el, text){
-    var b = text.indexOf("What it should be"), d = text.indexOf("Difference:");
-    if (b === -1) return false;
     var lines = text.split("\n").map(function(l){ return l.trim(); });
-    // section A = row/total lines before "What it should be"; prose before those = "before" bubble
-    var idxB = -1, idxD = -1;
-    lines.forEach(function(l, i){ if (idxB === -1 && /^What it should be/i.test(l)) idxB = i; if (idxD === -1 && /^Difference:/i.test(l)) idxD = i; });
-    var firstRow = -1;
-    for (var i = 0; i < idxB; i++) { if (isRow(lines[i]) || /^year one/i.test(lines[i])) { firstRow = i; break; } }
-    if (firstRow === -1) return false;
-    var A = { rows: [], total: null }, B = { rows: [], total: null };
-    var beforeLines = lines.slice(0, firstRow).filter(function(l){ return l && !/^As you're likely being quoted/i.test(l); });
-    lines.slice(firstRow, idxB).forEach(function(l){
-      if (/^As you're likely being quoted/i.test(l) || !l) return;
-      if (/^year one/i.test(l)) { A.total = money(l); return; }
-      if (isRow(l)) A.rows.push(parseRow(l));
+    var isQuotedTotal = function(l){ return /^year one as quoted/i.test(l); };
+    var isRightTotal = function(l){ return /^year one right-sized/i.test(l); };
+    var isHeader = function(l){ return /^As you're likely being quoted/i.test(l) || /^What it should be/i.test(l); };
+    // find every estimate: rows -> "Year one as quoted" -> rows -> "Year one right-sized" -> optional Difference
+    var ests = [];
+    for (var i = 0; i < lines.length; i++) {
+      if (!isQuotedTotal(lines[i])) continue;
+      var start = i - 1;
+      while (start >= 0 && (isRow(lines[start]) || isHeader(lines[start]) || lines[start] === "")) start--;
+      start++;
+      while (start < i && lines[start] === "") start++;
+      var A = { rows: [], total: money(lines[i]) }, B = { rows: [], total: null }, diffLine = "", end = i;
+      for (var k = start; k < i; k++) if (isRow(lines[k])) A.rows.push(parseRow(lines[k]));
+      var j = i + 1;
+      for (; j < lines.length; j++) {
+        if (isRightTotal(lines[j])) { B.total = money(lines[j]); end = j; break; }
+        if (isQuotedTotal(lines[j])) break;
+        if (isRow(lines[j])) B.rows.push(parseRow(lines[j]));
+      }
+      if (B.total === null || !A.rows.length || !B.rows.length) continue;
+      var m = end + 1; while (m < lines.length && lines[m] === "") m++;
+      if (m < lines.length && /^Difference:/i.test(lines[m])) { diffLine = lines[m]; end = m; }
+      ests.push({ start: start, end: end, A: A, B: B, diff: diffLine });
+      i = end;
+    }
+    if (!ests.length) return false;
+    var parent = el.parentNode;
+    var beforeLines = lines.slice(0, ests[0].start).filter(function(l){ return l && !/^-{2,}$/.test(l); });
+    if (beforeLines.length) { var b1 = document.createElement("div"); b1.className = "b bot"; b1.textContent = beforeLines.join("\n"); parent.insertBefore(b1, el); }
+    ests.forEach(function(est, idx){
+      if (idx > 0) {
+        var between = lines.slice(ests[idx - 1].end + 1, est.start).filter(function(l){ return l && !/^-{2,}$/.test(l); });
+        if (between.length) { var bb = document.createElement("div"); bb.className = "b bot"; bb.textContent = between.join("\n"); parent.insertBefore(bb, el); }
+      }
+      parent.insertBefore(buildCard(est, ests.length > 1), el);
     });
-    var endB = idxD === -1 ? lines.length : idxD;
-    lines.slice(idxB + 1, endB).forEach(function(l){
-      if (!l) return;
-      if (/^year one/i.test(l)) { B.total = money(l); return; }
-      if (isRow(l)) B.rows.push(parseRow(l));
-    });
-    if (!A.rows.length || !B.rows.length) return false;
-    var diffLine = idxD !== -1 ? lines[idxD] : "";
-    var afterLines = idxD !== -1 ? lines.slice(idxD + 1).filter(Boolean) : [];
-    // align rows by key
+    var afterLines = lines.slice(ests[ests.length - 1].end + 1).filter(function(l){ return l && !/^-{2,}$/.test(l); });
+    if (afterLines.length) { el.textContent = afterLines.join("\n"); } else { el.remove(); }
+    return true;
+  }
+  function buildCard(est, multi){
+    var A = est.A, B = est.B, diffLine = est.diff;
     var merged = [], usedB = {};
     A.rows.forEach(function(ra){
       var match = -1;
@@ -246,14 +265,14 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
       else merged.push({ lbl: ra.lbl, a: ra.amt, b: "\u2014", blbl: "" });
     });
     B.rows.forEach(function(rb, j){ if (!usedB[j]) merged.push({ lbl: rb.lbl, a: "\u2014", b: rb.amt, blbl: rb.lbl }); });
+    var n = function(s){ return parseInt(String(s || "").replace(/[^\d]/g, ""), 10) || 0; };
     var diffAmt = money(diffLine) || "", diffPct = (diffLine.match(/(\d+)\s?%/) || [])[1];
-    if (!diffAmt && A.total && B.total) {
-      var n = function(s){ return parseInt(String(s).replace(/[^\d]/g, ""), 10) || 0; };
-      var dv = n(A.total) - n(B.total); diffAmt = "$" + dv.toLocaleString("en-US");
-      diffPct = n(A.total) ? Math.round(dv / n(A.total) * 100) : "";
-    }
+    if (!diffAmt && A.total && B.total) diffAmt = "$" + (n(A.total) - n(B.total)).toLocaleString("en-US");
+    if (!diffPct && A.total && B.total && n(A.total)) diffPct = Math.round((n(A.total) - n(B.total)) / n(A.total) * 100);
     var hasZeroOnboarding = merged.some(function(r){ return /onboard/i.test(r.lbl + " " + r.blbl) && /^\$0/.test(r.b); });
-    var html = '<div class="est-head"><span>Your year-one estimate</span><small>HubSpot list rates</small></div>';
+    var tier = "";
+    if (multi) { var joined = A.rows.map(function(r){ return r.lbl; }).join(" "); tier = /enterprise/i.test(joined) ? " \u2014 Enterprise" : /professional|\bpro\b/i.test(joined) ? " \u2014 Professional" : /starter/i.test(joined) ? " \u2014 Starter" : ""; }
+    var html = '<div class="est-head"><span>Your year-one estimate' + esc(tier) + '</span><small>HubSpot list rates</small></div>';
     html += '<table><thead><tr><th></th><th>As quoted</th><th class="good">Right-sized</th></tr></thead><tbody>';
     merged.forEach(function(r){
       var lbl = r.lbl.split(/\s[x\u00d7]\s/)[0].replace(/\s*\([^)]*\)\s*$/, "").replace(/[,\s]+$/, "");
@@ -266,11 +285,7 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
     html += '<div class="diff"><div><strong>' + esc(diffAmt) + ' you keep</strong>' + (diffPct ? '<span>about ' + esc(diffPct) + '% of year one</span>' : '') + '</div>'
          + '<ul>' + (hasZeroOnboarding ? '<li>Onboarding fee: $0 where your deal qualifies</li>' : '') + '<li>Negotiation tips may move it further</li><li>Illustrative \u2014 only HubSpot can quote you</li></ul></div>';
     var card = document.createElement("div"); card.className = "est"; card.innerHTML = html;
-    var parent = el.parentNode;
-    if (beforeLines.length) { var b1 = document.createElement("div"); b1.className = "b bot"; b1.textContent = beforeLines.join("\n"); parent.insertBefore(b1, el); }
-    parent.insertBefore(card, el);
-    if (afterLines.length) { el.textContent = afterLines.join("\n"); } else { el.remove(); }
-    return true;
+    return card;
   }
   function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
@@ -465,6 +480,8 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
   });
 
   // ---------- wire ----------
+  input.addEventListener("focus", function(){ notifyParent({ crmchat_focus: true }); setTimeout(scrollDown, 350); });
+  input.addEventListener("blur", function(){ notifyParent({ crmchat_focus: false }); });
   sendBtn.addEventListener("click", send);
   input.addEventListener("keydown", function(e){
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
