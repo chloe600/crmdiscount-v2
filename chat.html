@@ -208,7 +208,12 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
     messages.push({ role: "user", content: text });
     var m = text.match(EMAIL_RE);
     if (!m) {
-      botSay("Just the email and I\u2019ll take care of the rest \u2014 like name@yourcompany.com.", null, true);
+      if (/^(skip|no thanks|no|later)\b/i.test(text)) {
+        awaitingEmail = false;
+        botSay("No problem \u2014 ask me anything and I\u2019ll try again.", null, true);
+        return;
+      }
+      botSay("Just the email and I\u2019ll take care of the rest \u2014 like name@yourcompany.com. (Or say \u201Cskip\u201D to keep chatting.)", null, true);
       return;
     }
     if (isFreeMail(m[0])) {
@@ -237,13 +242,27 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
     pending = true; sendBtn.disabled = true;
     var t0 = Date.now();
     showTyping(true);
-    fetch(ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: messages.slice(-24), session: SESSION_ID })
+    function callApi(){
+      return fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: messages.slice(-24), session: SESSION_ID })
+      });
+    }
+    function checkOk(r){
+      if (!r.ok || !r.body) {
+        return r.text().then(function(t){
+          console.error("CRMdiscount chat: /api/chat failed", r.status, t.slice(0, 300));
+          throw new Error("http " + r.status);
+        });
+      }
+      return r;
+    }
+    callApi().then(checkOk).catch(function(){
+      // one automatic retry after a short pause (cold starts, blips)
+      return new Promise(function(res){ setTimeout(res, 1500); }).then(callApi).then(checkOk);
     })
     .then(function(r){
-      if (!r.ok || !r.body) throw new Error("http " + (r ? r.status : "?"));
       showTyping(false);
       var el = makeBubble("assistant");
       var reader = r.body.getReader();
