@@ -349,7 +349,7 @@ details[open]{box-shadow:0 1px 2px rgba(18,23,43,.05),0 14px 32px rgba(18,23,43,
   box-shadow:0 0 0 3px rgba(79,70,229,.14),0 8px 16px rgba(18,23,43,.10),0 36px 80px rgba(79,70,229,.22)}
 @media (prefers-reduced-motion:reduce){.chat-frame-hero{transition:none}.chat-frame-hero:hover{transform:none}}
 @media (max-width:860px){.chat-frame-hero{margin:0 auto;max-width:100%}}
-.chat-frame-hero.kb{position:fixed;left:8px;right:8px;width:auto;max-width:none;margin:0;z-index:9999;border-radius:14px;
+.chat-frame-hero.kb{position:fixed;left:8px;width:calc(100vw - 16px);max-width:none;margin:0;z-index:9999;border-radius:14px;
   box-shadow:0 8px 28px rgba(18,23,43,.28);transform:none !important;transition:none}
 @media (max-width:560px){.chat-frame{height:70vh;min-height:480px}.chat-frame-hero{height:60vh;min-height:440px}}
 </style>
@@ -687,18 +687,25 @@ var BOOKING_URL = "https://calendly.com/team-crmdiscount/20min";
   // Mobile keyboard handling: while typing, pin the chat frame to the visible area above the keyboard
   var chatFocused = false, kbActive = false, kbSpacer = null, kbTimers = [];
   var vv = window.visualViewport;
+  var kbSeenSmall = false;
   function placePinned(){
     var frame = document.getElementById("chatFrame");
     if (!frame || !kbActive) return;
+    var vh = vv ? vv.height : window.innerHeight;
+    // keyboard closed again (viewport back to nearly full height) -> leave typing mode
+    if (kbSeenSmall && vh >= window.innerHeight - 120) { exitKb(); return; }
+    if (vh < window.innerHeight - 120) kbSeenSmall = true;
     var top = (vv ? vv.offsetTop : 0) + 6;
-    var height = (vv ? vv.height : window.innerHeight) - 12;
     frame.style.top = top + "px";
-    frame.style.height = Math.max(260, Math.round(height)) + "px";
+    frame.style.height = Math.max(260, Math.round(vh - 12)) + "px";
   }
+  document.addEventListener("touchstart", function(e){
+    if (kbActive && e.target !== document.getElementById("chatFrame")) exitKb();
+  }, { passive: true });
   function enterKb(){
     var frame = document.getElementById("chatFrame");
     if (!frame || kbActive || window.innerWidth > 1024) return;
-    kbActive = true;
+    kbActive = true; kbSeenSmall = false;
     kbSpacer = document.createElement("div");
     kbSpacer.style.height = frame.getBoundingClientRect().height + "px";
     frame.parentNode.insertBefore(kbSpacer, frame);
@@ -706,6 +713,7 @@ var BOOKING_URL = "https://calendly.com/team-crmdiscount/20min";
     placePinned();
     if (vv) { vv.addEventListener("resize", placePinned); vv.addEventListener("scroll", placePinned); }
     [100, 300, 600, 1000].forEach(function(ms){ kbTimers.push(setTimeout(placePinned, ms)); });
+    kbTimers.push(setTimeout(function(){ if (kbActive && !kbSeenSmall) exitKb(); }, 1500));
   }
   function exitKb(){
     var frame = document.getElementById("chatFrame");
