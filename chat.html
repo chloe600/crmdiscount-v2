@@ -480,8 +480,7 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
   });
 
   // ---------- wire ----------
-  input.addEventListener("focus", function(){ notifyParent({ crmchat_focus: true }); setTimeout(scrollDown, 350); });
-  input.addEventListener("blur", function(){ notifyParent({ crmchat_focus: false }); });
+  input.addEventListener("focus", function(){ notifyParent({ crmchat_focus: true }); setTimeout(scrollDown, 400); });
   sendBtn.addEventListener("click", send);
   input.addEventListener("keydown", function(e){
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
