@@ -682,7 +682,26 @@ var BOOKING_URL = "https://calendly.com/team-crmdiscount/20min";
 
   // Events from the chat iframe and from Calendly (booking completed)
 
+  // Mobile keyboard handling: keep the whole chat frame visible above the keyboard while typing
+  var chatFocused = false;
+  function fitChatToKeyboard(){
+    var frame = document.getElementById("chatFrame");
+    if (!frame || window.innerWidth > 1024) return;
+    if (!chatFocused) { frame.style.height = ""; return; }
+    var vv = window.visualViewport;
+    var avail = (vv ? vv.height : window.innerHeight) - 12;
+    frame.style.height = Math.max(300, Math.round(avail)) + "px";
+    var top = frame.getBoundingClientRect().top + window.pageYOffset - 6 + (vv ? vv.offsetTop : 0);
+    window.scrollTo({ top: top, behavior: "auto" });
+  }
+  if (window.visualViewport) window.visualViewport.addEventListener("resize", function(){ if (chatFocused) fitChatToKeyboard(); });
+
   window.addEventListener("message", function(e){
+    if (e.data && typeof e.data.crmchat_focus === "boolean") {
+      chatFocused = e.data.crmchat_focus;
+      if (chatFocused) { setTimeout(fitChatToKeyboard, 350); setTimeout(fitChatToKeyboard, 700); }
+      else { setTimeout(fitChatToKeyboard, 250); }
+    }
     if (e.data && e.data.crmchat_event === "chat_engaged") {
       push("chat_engaged"); // Google Ads conversion candidate
     }
