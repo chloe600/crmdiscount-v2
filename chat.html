@@ -45,6 +45,25 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
 .chip.go{background:var(--accent-deep);border-color:var(--accent-deep);color:#fff;
   flex:1 0 100%;justify-content:center;text-align:center;padding:11px;font-size:.88rem;margin-top:2px}
 .chips .cap{flex:1 0 100%;font-size:.72rem;color:var(--ink-soft);letter-spacing:.02em;margin-bottom:-2px}
+.est{flex:none;align-self:stretch;max-width:100%;background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  box-shadow:0 2px 6px rgba(18,23,43,.06),0 12px 28px rgba(18,23,43,.08);font-size:.84rem}
+.est .est-head{background:var(--ink);color:#fff;padding:10px 14px;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.9rem;font-variant-ligatures:none;display:flex;justify-content:space-between;align-items:center}
+.est .est-head small{font-family:'Inter',sans-serif;font-weight:500;font-size:.68rem;color:rgba(255,255,255,.65);letter-spacing:.06em;text-transform:uppercase}
+.est .sec{padding:10px 14px 6px}
+.est .sec + .sec{border-top:1px dashed var(--line)}
+.est .sec-title{display:inline-block;font-size:.66rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;border-radius:999px;padding:3px 9px;margin-bottom:6px;background:var(--wash);color:var(--ink-soft)}
+.est .sec.good .sec-title{background:var(--tint);color:var(--accent-deep)}
+.est .row{display:flex;justify-content:space-between;gap:12px;padding:5px 0;line-height:1.35}
+.est .row .lbl{color:var(--ink);flex:1}
+.est .row .amt{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600}
+.est .row.zero .amt{color:var(--accent-deep)}
+.est .row.zero .lbl::after{content:"where eligible";display:inline-block;margin-left:6px;font-size:.62rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-deep);border:1px dashed var(--accent);border-radius:999px;padding:1px 6px;vertical-align:middle}
+.est .total{display:flex;justify-content:space-between;gap:12px;padding:7px 0 4px;border-top:1px solid var(--line);margin-top:4px;font-weight:700}
+.est .total .amt{font-family:'Bricolage Grotesque',sans-serif;font-size:1rem;font-variant-ligatures:none;font-variant-numeric:tabular-nums}
+.est .sec.good .total .amt{color:var(--accent-deep)}
+.est .diff{background:linear-gradient(90deg,var(--accent),var(--accent-deep));color:#fff;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.est .diff strong{font-family:'Bricolage Grotesque',sans-serif;font-size:1.25rem;font-weight:800;font-variant-ligatures:none;font-variant-numeric:tabular-nums}
+.est .diff span{font-size:.72rem;opacity:.9;text-align:right;line-height:1.3}
 .prompt-line{flex:none;background:var(--wash);padding:8px 16px 0;font-size:.8rem;color:var(--ink-soft);cursor:pointer;display:none;font-style:italic}
 .prompt-line.on{display:block}
 .prompt-line:hover{color:var(--accent-deep)}
@@ -176,9 +195,53 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
   function actionChips(){
     setChips([
       { label: "Get my yes or no", go: true, on: function(){ notifyParent({ crmchat_action: "book" }); } },
-      { label: "Email me this breakdown", on: function(){ sendToBot("Email me this breakdown", false); } }
+      { label: "Send me the negotiation tips", on: function(){ sendToBot("Send me the negotiation tips", false); } }
     ]);
   }
+
+  // ---------- estimate card renderer ----------
+  function money(s){ var m = s.match(/\$\s?[\d,]+(?:\.\d+)?/); return m ? m[0].replace(/\s/g, "") : null; }
+  function renderEstimate(el, text){
+    var a = text.indexOf("As you're likely being quoted"), b = text.indexOf("What it should be"), d = text.indexOf("Difference:");
+    if (a === -1 || b === -1 || d === -1 || b < a || d < b) return false;
+    var dEnd = text.indexOf("\n", d); if (dEnd === -1) dEnd = text.length;
+    var before = text.slice(0, a).trim(), block = text.slice(a, dEnd), after = text.slice(dEnd).trim();
+    var lines = block.split("\n").map(function(l){ return l.trim(); }).filter(Boolean);
+    var sections = [], cur = null, diffLine = "";
+    lines.forEach(function(l){
+      if (/^As you're likely being quoted/i.test(l)) { cur = { title: "As you're likely being quoted", rows: [], total: null, good: false }; sections.push(cur); return; }
+      if (/^What it should be/i.test(l)) { cur = { title: "What it should be", rows: [], total: null, good: true }; sections.push(cur); return; }
+      if (/^Difference:/i.test(l)) { diffLine = l; return; }
+      if (!cur) return;
+      if (/^Year one/i.test(l)) { cur.total = { lbl: l.split(":")[0], amt: money(l) || "" }; return; }
+      var eq = l.lastIndexOf("=");
+      var lbl = eq !== -1 ? l.slice(0, eq).trim() : l.replace(/\$[\d,]+.*$/, "").trim();
+      var amt = eq !== -1 ? (money(l.slice(eq + 1)) || l.slice(eq + 1).trim()) : (money(l) || "");
+      cur.rows.push({ lbl: lbl.replace(/[,\s]+$/, ""), amt: amt });
+    });
+    if (sections.length < 2) return false;
+    var diffAmt = money(diffLine) || "", diffPct = (diffLine.match(/(\d+)\s?%/) || [])[1];
+    var card = document.createElement("div"); card.className = "est";
+    var html = '<div class="est-head"><span>Your year-one estimate</span><small>HubSpot list rates</small></div>';
+    sections.forEach(function(s){
+      html += '<div class="sec' + (s.good ? ' good' : '') + '"><span class="sec-title">' + s.title + '</span>';
+      s.rows.forEach(function(r){
+        var zero = /^\$0(\.00)?$/.test(r.amt);
+        html += '<div class="row' + (zero && s.good ? ' zero' : '') + '"><span class="lbl">' + esc(r.lbl) + '</span><span class="amt">' + esc(r.amt) + '</span></div>';
+      });
+      if (s.total) html += '<div class="total"><span>' + esc(s.total.lbl) + '</span><span class="amt">' + esc(s.total.amt) + '</span></div>';
+      html += '</div>';
+    });
+    html += '<div class="diff"><strong>' + esc(diffAmt) + ' you can knock off</strong><span>' + (diffPct ? 'about ' + esc(diffPct) + '% of year one' : '') + '<br>illustrative \u2014 only HubSpot can quote you</span></div>';
+    card.innerHTML = html;
+    // replace the plain bubble with: text-before bubble, card, text-after bubble
+    var parent = el.parentNode;
+    if (before) { var b1 = document.createElement("div"); b1.className = "b bot"; b1.textContent = before; parent.insertBefore(b1, el); }
+    parent.insertBefore(card, el);
+    if (after) { el.textContent = after; } else { el.remove(); }
+    return true;
+  }
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
   // ---------- lead capture (works without the model) ----------
   function isFreeMail(email){
@@ -267,29 +330,39 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
       var el = makeBubble("assistant");
       var reader = r.body.getReader();
       var dec = new TextDecoder();
-      var raw = "";
+      var raw = "", finalized = false, idleTimer = null;
+      var END = "\u001e"; // end-of-reply marker sent by the server before its slow logging
       function strip(t){
-        return t.replace(/\*\*/g, "").replace(/^#{1,4}\s+/gm, "").replace(/^\s*[\*\-]\s+/gm, "\u2013 ");
+        return t.replace(END, "").replace(/\*\*/g, "").replace(/^#{1,4}\s+/gm, "").replace(/^\s*[\*\-]\s+/gm, "\u2013 ");
       }
-      function pump(){
-        return reader.read().then(function(x){
-          if (x.done) return;
-          raw += dec.decode(x.value, { stream: true });
-          el.textContent = strip(raw);
-          scrollDown();
-          return pump();
-        });
-      }
-      return pump().then(function(){
+      function finalize(){
+        if (finalized) return;
+        finalized = true;
+        clearTimeout(idleTimer);
         var finalText = strip(raw).trim();
         if (!finalText) { el.remove(); throw new Error("empty"); }
-        el.textContent = finalText;
         messages.push({ role: "assistant", content: finalText });
+        if (!renderEstimate(el, finalText)) el.textContent = finalText;
         scrollDown();
         if (finalText.indexOf("Difference:") !== -1) actionChips();
         pending = false;
         sendBtn.disabled = false;
-      });
+        input.focus();
+      }
+      function armIdle(){
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(function(){ if (raw.trim()) finalize(); }, 6000);
+      }
+      function pump(){
+        return reader.read().then(function(x){
+          if (x.done) { finalize(); return; }
+          raw += dec.decode(x.value, { stream: true });
+          if (!finalized) { el.textContent = strip(raw); scrollDown(); armIdle(); }
+          if (raw.indexOf(END) !== -1) finalize();
+          return pump(); // keep draining so the server can finish its logging
+        });
+      }
+      return pump();
     })
     .catch(function(){
       showTyping(false);
