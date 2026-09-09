@@ -67,6 +67,14 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
 .est .diff span{display:block;font-size:.72rem;opacity:.9}
 .est .diff ul{list-style:none;margin:0;padding:0;font-size:.7rem;line-height:1.5;opacity:.95}
 .est .diff li::before{content:"\2713  ";font-weight:700}
+.b.building{width:88%}
+.est-skel{margin-top:8px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--paper)}
+.est-skel .h{height:30px;background:var(--ink);display:flex;align-items:center;padding:0 12px;color:#fff;font-size:.72rem;font-weight:700;letter-spacing:.04em}
+.est-skel .h i{display:inline-block;width:5px;height:5px;border-radius:50%;background:#fff;opacity:.4;margin-left:3px;animation:blink 1.2s infinite}
+.est-skel .h i:nth-child(2){animation-delay:.2s}.est-skel .h i:nth-child(3){animation-delay:.4s}
+.est-skel .l{height:10px;margin:9px 12px;border-radius:5px;background:linear-gradient(90deg,#E8EAF3 25%,#F6F7FB 50%,#E8EAF3 75%);background-size:200% 100%;animation:shimmer 1.3s linear infinite}
+.est-skel .l.w1{width:70%}.est-skel .l.w2{width:85%}.est-skel .l.w3{width:55%}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .prompt-line{flex:none;background:var(--wash);padding:8px 16px 0;font-size:.8rem;color:var(--ink-soft);cursor:pointer;display:none;font-style:italic}
 .prompt-line.on{display:block}
 .prompt-line:hover{color:var(--accent-deep)}
@@ -388,6 +396,7 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
         var finalText = strip(raw).trim();
         if (!finalText) { el.remove(); throw new Error("empty"); }
         messages.push({ role: "assistant", content: finalText });
+        el.classList.remove("building");
         if (!renderEstimate(el, finalText)) el.textContent = finalText;
         scrollDown();
         if (/Difference:|Year one right-sized:|Year one as quoted:/.test(finalText)) actionChips();
@@ -399,11 +408,29 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
         clearTimeout(idleTimer);
         idleTimer = setTimeout(function(){ if (raw.trim()) finalize(); }, 6000);
       }
+      var skel = null;
+      function estimateStart(t){
+        var m = t.search(/(^|\n)\s*(As you're likely being quoted|Year one as quoted|What it should be)/i);
+        if (m !== -1) return m;
+        return t.search(/(^|\n)[^\n]{3,90}=\s*\$[\d,]+/);
+      }
+      function showStreaming(t){
+        var s = estimateStart(t);
+        if (s === -1) { el.textContent = strip(t); return; }
+        var pre = strip(t.slice(0, s)).trim();
+        if (!skel) {
+          skel = document.createElement("div"); skel.className = "est-skel";
+          skel.innerHTML = '<div class="h">Building your estimate<i></i><i></i><i></i></div><div class="l w1"></div><div class="l w2"></div><div class="l w3"></div><div class="l w2"></div>';
+        }
+        el.classList.add("building");
+        el.textContent = pre;
+        el.appendChild(skel);
+      }
       function pump(){
         return reader.read().then(function(x){
           if (x.done) { finalize(); return; }
           raw += dec.decode(x.value, { stream: true });
-          if (!finalized) { el.textContent = strip(raw); scrollDown(); armIdle(); }
+          if (!finalized) { showStreaming(raw); scrollDown(); armIdle(); }
           if (raw.indexOf(END) !== -1) finalize();
           return pump(); // keep draining so the server can finish its logging
         });
