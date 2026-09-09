@@ -681,8 +681,6 @@ var BOOKING_URL = "https://calendly.com/team-crmdiscount/20min";
   });
 
   // Events from the chat iframe and from Calendly (booking completed)
-  var chatFrame = document.getElementById("chatFrame");
-  function tellChat(key){ try { chatFrame.contentWindow.postMessage({ crmchat_prompt: key }, "*"); } catch(err){} }
 
   window.addEventListener("message", function(e){
     if (e.data && e.data.crmchat_event === "chat_engaged") {
@@ -697,25 +695,6 @@ var BOOKING_URL = "https://calendly.com/team-crmdiscount/20min";
     }
   });
 
-  // Section-aware nudges for the assistant (the chat enforces its own caps)
-  [["#who .fee-list", "fees"], ["#compare", "compare"], ["#faq", "faq"]].forEach(function(pair){
-    var el = document.querySelector(pair[0]);
-    if (!el || !("IntersectionObserver" in window)) return;
-    var io = new IntersectionObserver(function(entries){
-      if (entries.some(function(en){ return en.isIntersecting; })) { io.disconnect(); tellChat(pair[1]); }
-    }, { threshold: 0.5 });
-    io.observe(el);
-  });
-  var deepSent = false;
-  window.addEventListener("scroll", function(){
-    if (deepSent) return;
-    if (window.scrollY > (document.body.scrollHeight - innerHeight) * 0.6) { deepSent = true; tellChat("deep"); }
-  }, { passive: true });
-  var exitSent = false;
-  document.addEventListener("mouseout", function(e){
-    if (exitSent || e.relatedTarget || e.clientY > 10) return;
-    exitSent = true; tellChat("exit");
-  });
 })();
 
 // Platforms strip: pills drift away from the cursor (interactive, not clickable)
