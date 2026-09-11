@@ -24,7 +24,6 @@
 </script>
 <!-- End Google tag -->
 
-<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -647,6 +646,8 @@ var BOOKING_URL = "https://calendly.com/team-crmdiscount/20min";
     if (window.Calendly) return Promise.resolve();
     if (widgetLoading) return widgetLoading;
     widgetLoading = new Promise(function(resolve, reject){
+      var l = document.createElement("link"); l.rel = "stylesheet";
+      l.href = "https://assets.calendly.com/assets/external/widget.css"; document.head.appendChild(l);
       var s = document.createElement("script");
       s.src = "https://assets.calendly.com/assets/external/widget.js";
       s.async = true;
