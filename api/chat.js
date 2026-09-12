@@ -18,10 +18,11 @@ YOUR JOB, in order:
    HubSpot onboarding fee (required when buying direct) = $1,500
    Year one as quoted: $13,500
    What it should be:
-   Sales Hub Professional, 10 seats x $100/mo x 12 = $12,000
+   Sales Hub Professional, 10 seats x $90/mo x 12, annual rate = $10,800
    Onboarding, delivered by the partner agency where your deal qualifies = $0
-   Year one right-sized: $12,000
-   Difference: $1,500. Roughly 11% of year one.
+   Year one right-sized: $10,800
+   Difference: $2,700. Roughly 20% of year one.
+   THE RIGHT-SIZED COLUMN USES HUBSPOT'S ANNUAL-COMMITMENT RATE for Professional hubs: 10% below the monthly list (Sales/Service Pro $90/seat instead of $100; Marketing Pro $801/mo instead of $890 \u2014 round to $800; Starter $15 instead of $20). Label those lines "annual rate". Enterprise tiers are billed annually at list already \u2014 no reduction. Contact blocks are unchanged.
    ONBOARDING IS CHARGED PER HUB. The as-quoted onboarding line must add up the required fee of EVERY Professional or Enterprise hub in the deal and name them: Marketing Pro + Sales Pro = "Onboarding fees (Marketing Pro $3,000 + Sales Pro $1,500) = $4,500"; Marketing Pro + Sales Pro + Service Pro = $6,000; Sales Enterprise alone = $3,500. Never list only one hub's fee when two or more Pro/Enterprise hubs are in scope. Starter hubs and the free tools carry no onboarding fee.
    MARKETING HUB ESTIMATES REQUIRE THE MARKETING-CONTACT COUNT, AND IT IS NOT THE DATABASE SIZE. Total contacts in the CRM are free; only MARKETING contacts (the ones you send marketing email or ads to) are priced. Ask it exactly that way: "Of those, roughly how many would you actually send marketing email or ads to?" If a visitor gives a database total (e.g. 50,000), never price all of it \u2014 ask what share is genuinely marketed to, and if they don't know, use a stated assumption (e.g. "assuming about half are contacts you'd actually email") and label it. The as-quoted column prices what HubSpot's rep typically quotes (all contacts synced as marketing contacts); the right-sized column prices only the contacts they'd actually market to, with the rest reclassified as free non-marketing contacts \u2014 that reclassification is usually the biggest saving on a Marketing Hub deal and must appear as its own change between the columns.
    SELF-CHECK BEFORE SENDING THE CARD: (0) Marketing Hub Pro line = $890 x 12 = $10,680 plus $600/yr per core seat beyond the 3 included \u2014 never more than that for the base; (1) every Pro/Enterprise hub has its onboarding fee in the as-quoted total; (2) marketing contacts above the included amount are priced in blocks; (3) seat counts match what the visitor said; (4) each total equals the sum of its lines; (5) Difference = quoted minus right-sized.
@@ -134,7 +135,7 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+        model: 'claude-sonnet-4-6', // switched from claude-haiku-4-5-20251001 for arithmetic reliability
         stream: true,
         max_tokens: 900,
         system: systemForThisTurn,
@@ -194,7 +195,7 @@ export default async function handler(req, res) {
         const again = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
           headers: { 'content-type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
-          body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 900, system: SYSTEM_PROMPT, messages: merged })
+          body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 900, system: SYSTEM_PROMPT, messages: merged })
         });
         const data = await again.json();
         full = (data.content || []).filter(function (b) { return b.type === 'text'; }).map(function (b) { return b.text; }).join('\n').trim();
