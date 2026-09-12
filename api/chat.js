@@ -113,6 +113,15 @@ export default async function handler(req, res) {
     }
     while (merged.length && merged[0].role !== 'user') merged.shift();
 
+    const FREE_MAIL_LIST = ['gmail.com','yahoo.com','outlook.com','hotmail.com','aol.com','icloud.com','proton.me','protonmail.com','gmx.com','yandex.com','mail.com','live.com','msn.com','ymail.com'];
+    const knownEmailRaw = String((req.body && req.body.email) || '').trim();
+    const knownEmailOk = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(knownEmailRaw)
+      && FREE_MAIL_LIST.indexOf(knownEmailRaw.split('@')[1].toLowerCase()) === -1;
+    const knownEmail = knownEmailOk ? knownEmailRaw : '';
+    const systemForThisTurn = knownEmail
+      ? SYSTEM_PROMPT + '\n\nVISITOR EMAIL ALREADY ON FILE: ' + knownEmail + '. Never ask for an email again in this conversation. When you reach the handoff, say the written breakdown and the negotiation tips will go to that address the same working day, and offer the call as the other path.'
+      : SYSTEM_PROMPT;
+
     const upstream = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -124,7 +133,7 @@ export default async function handler(req, res) {
         model: 'claude-haiku-4-5-20251001',
         stream: true,
         max_tokens: 900,
-        system: SYSTEM_PROMPT,
+        system: systemForThisTurn,
         messages: merged
       })
     });
@@ -235,7 +244,8 @@ export default async function handler(req, res) {
     try {
       const hookUrl = process.env.LEADS_WEBHOOK_URL;
       const lastUser = merged.length ? merged[merged.length - 1].content : '';
-      const emailMatch = lastUser.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+      const emailMatch = lastUser.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)
+        || (knownEmail && /Difference:|Year one right-sized:/.test(reply) ? [knownEmail] : null);
       const FREE_MAIL = ['gmail.com','yahoo.com','outlook.com','hotmail.com','aol.com','icloud.com','proton.me','protonmail.com','gmx.com','yandex.com','mail.com','live.com','msn.com','ymail.com'];
       const isCompanyEmail = emailMatch && FREE_MAIL.indexOf(emailMatch[0].split('@')[1].toLowerCase()) === -1;
       if (hookUrl && isCompanyEmail) {
