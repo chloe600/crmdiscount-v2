@@ -313,9 +313,9 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
   function earlyEmailAsk(){
     if (emailGiven) return;
     var el = makeBubble("assistant");
-    el.textContent = "Great. One quick thing, in case we get disconnected: leave your work email and I\u2019ll send you this chat and your results when we\u2019re done. Or just keep answering \u2014 it\u2019s optional.";
+    el.textContent = "Great. One quick thing, in case we get disconnected: leave your email and I\u2019ll send you this chat and your results when we\u2019re done.";
     var row = document.createElement("div"); row.className = "emailrow";
-    var inp = document.createElement("input"); inp.type = "email"; inp.placeholder = "name@yourcompany.com"; inp.setAttribute("aria-label", "Work email");
+    var inp = document.createElement("input"); inp.type = "email"; inp.placeholder = "you@company.com"; inp.setAttribute("aria-label", "Work email");
     var btn = document.createElement("button"); btn.type = "button"; btn.textContent = "Save my chat";
     var err = document.createElement("span"); err.className = "emailerr"; err.style.display = "none";
     row.appendChild(inp); row.appendChild(btn); el.appendChild(row); el.appendChild(err);
