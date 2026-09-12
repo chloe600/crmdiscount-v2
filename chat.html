@@ -225,7 +225,7 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
 
   // ---------- estimate card renderer (comparison table) ----------
   function money(s){ var m = String(s).match(/\$\s?[\d,]+(?:\.\d+)?/); return m ? m[0].replace(/\s/g, "") : null; }
-  function isRow(l){ return /=\s*\$/.test(l) || (/\$[\d,]+/.test(l) && !/^year one/i.test(l) && !/^difference/i.test(l)); }
+  function isRow(l){ return (/=\s*\$[\d,]+(\.\d+)?\s*$/.test(l) || /\$[\d,]+(\.\d+)?\s*$/.test(l)) && !/^year one/i.test(l) && !/^difference/i.test(l) && !/[.!?]\s*$/.test(l.replace(/\$[\d,]+(\.\d+)?\s*$/, "")); }
   function rowKey(l){
     return l.toLowerCase().replace(/\$[\d,\.]+/g, "").replace(/[\d,\.]+/g, "").replace(/[^a-z ]/g, " ")
             .replace(/\b(x|mo|month|seats?|per|the|a|an|of|and|with|for)\b/g, " ").trim().split(/\s+/).slice(0, 3).join(" ");
@@ -275,7 +275,7 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
       i = end;
     }
     if (!ests.length) return false;
-    var parent = el.parentNode;
+    var parent = el.parentNode, firstCardEl = null;
     var beforeLines = lines.slice(0, ests[0].start).filter(function(l){ return l && !/^-{2,}$/.test(l) && !isHeader(l); });
     // keep the preamble to one short sentence: the card explains itself
     var pre = beforeLines.join(" ").trim();
@@ -286,10 +286,12 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
         var between = lines.slice(ests[idx - 1].end + 1, est.start).filter(function(l){ return l && !/^-{2,}$/.test(l); });
         if (between.length) { var bb = document.createElement("div"); bb.className = "b bot"; bb.textContent = between.join("\n"); parent.insertBefore(bb, el); }
       }
-      parent.insertBefore(buildCard(est, ests.length > 1), el);
+      var cardEl = buildCard(est, ests.length > 1); if (idx === 0) firstCardEl = cardEl;
+      parent.insertBefore(cardEl, el);
     });
     var afterLines = lines.slice(ests[ests.length - 1].end + 1).filter(function(l){ return l && !/^-{2,}$/.test(l); });
     if (afterLines.length) { el.textContent = afterLines.join("\n"); } else { el.remove(); }
+    setTimeout(function(){ if (firstCardEl) msgsEl.scrollTop = Math.max(0, firstCardEl.offsetTop - 10); }, 60);
     return true;
   }
   function buildCard(est, multi){
@@ -314,21 +316,31 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
     var diffAmt = "", diffPct = "";
     if (A.total && B.total) { diffAmt = "$" + (n(A.total) - n(B.total)).toLocaleString("en-US"); diffPct = n(A.total) ? Math.round((n(A.total) - n(B.total)) / n(A.total) * 100) : ""; }
     else { diffAmt = money(diffLine) || ""; diffPct = (diffLine.match(/(\d+)\s?%/) || [])[1]; }
+    // CRMdiscount deal column: Professional hub subscription lines at HubSpot's annual rate (10% under monthly list)
+    // unless the bot already priced them lower than list.
+    var isProHub = function(l){ return /professional|\bpro\b|starter/i.test(l) && !/enterprise|onboard|implementation|setup|contact|block|tier/i.test(l); };
+    var annualApplied = false;
+    merged.forEach(function(r){
+      if (isProHub(r.lbl) && /^\$/.test(r.a) && /^\$/.test(r.b) && n(r.b) >= n(r.a)) {
+        r.b = "$" + Math.round(n(r.a) * 0.9).toLocaleString("en-US"); annualApplied = true;
+      }
+    });
+    if (annualApplied) { sumB = merged.reduce(function(s, r){ return s + (/^\$/.test(r.b) ? n(r.b) : 0); }, 0); B.total = "$" + sumB.toLocaleString("en-US"); diffAmt = "$" + (n(A.total) - sumB).toLocaleString("en-US"); diffPct = n(A.total) ? Math.round((n(A.total) - sumB) / n(A.total) * 100) : ""; }
     var hasZeroOnboarding = merged.some(function(r){ return /onboard/i.test(r.lbl + " " + r.blbl) && /^\$0/.test(r.b); });
     var tier = "";
     if (multi) { var joined = A.rows.map(function(r){ return r.lbl; }).join(" "); tier = /enterprise/i.test(joined) ? " \u2014 Enterprise" : /professional|\bpro\b/i.test(joined) ? " \u2014 Professional" : /starter/i.test(joined) ? " \u2014 Starter" : ""; }
     var html = '<div class="est-head"><span>Your year-one estimate' + esc(tier) + '</span><small>HubSpot list rates</small></div>';
-    html += '<table><thead><tr><th></th><th>As quoted</th><th class="good">Right-sized</th></tr></thead><tbody>';
+    html += '<table><thead><tr><th></th><th>HubSpot pricing</th><th class="good">CRMdiscount deal</th></tr></thead><tbody>';
     merged.forEach(function(r){
       var lbl = r.lbl.split(/\s[x\u00d7]\s/)[0].replace(/\s*\([^)]*\)\s*$/, "").replace(/:\s*[\d$][^:]*$/, "").replace(/[,:\s]+$/, "");
       if (lbl.length > 46) { var ci = lbl.indexOf(",", 22); if (ci > 0) lbl = lbl.slice(0, ci); }
       if (lbl.length > 52) lbl = lbl.slice(0, 49) + "\u2026";
       var zero = /^\$0/.test(r.b);
-      html += '<tr><td class="lbl">' + esc(lbl) + (zero && /onboard/i.test(r.lbl + " " + r.blbl) ? ' <em class="tag">where eligible</em>' : '') + '</td><td class="amt">' + esc(r.a) + '</td><td class="amt good' + (zero ? ' zero' : '') + '">' + esc(r.b) + '</td></tr>';
+      html += '<tr><td class="lbl">' + esc(lbl) + '</td><td class="amt">' + esc(r.a) + '</td><td class="amt good' + (zero ? ' zero' : '') + '">' + esc(r.b) + '</td></tr>';
     });
     html += '</tbody><tfoot><tr><td class="lbl">Year one</td><td class="amt">' + esc(A.total || "") + '</td><td class="amt good">' + esc(B.total || "") + '</td></tr></tfoot></table>';
     html += '<div class="diff"><div><strong>' + esc(diffAmt) + ' you keep</strong>' + (diffPct ? '<span>about ' + esc(diffPct) + '% of year one</span>' : '') + '</div>'
-         + '<ul>' + (hasZeroOnboarding ? '<li>Onboarding fee: $0 where your deal qualifies</li>' : '') + '<li>Negotiation tips may move it further</li><li>Illustrative \u2014 only HubSpot can quote you</li></ul></div>';
+         + '<ul>' + (annualApplied ? '<li>Hub prices at HubSpot\u2019s annual rate</li>' : '') + (hasZeroOnboarding ? '<li>Onboarding fee: $0 where your deal qualifies</li>' : '') + '<li>Negotiation tips may move it further</li><li>Illustrative \u2014 only HubSpot can quote you</li></ul></div>';
     var card = document.createElement("div"); card.className = "est"; card.innerHTML = html;
     return card;
   }
@@ -494,8 +506,7 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
         messages.push({ role: "assistant", content: finalText });
         el.classList.remove("building");
         var carded = renderEstimate(el, finalText);
-        if (!carded) el.textContent = finalText;
-        scrollDown();
+        if (!carded) { el.textContent = finalText; scrollDown(); }
         if (carded || /Difference\s*[:=\u2014-]|Year one right-sized|Year one as quoted/i.test(finalText)) actionChips();
         pending = false;
         sendBtn.disabled = false;
@@ -507,9 +518,15 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
       }
       var skel = null;
       function estimateStart(t){
+        var cands = [];
         var m = t.search(/(^|\n)\s*(As you're likely being quoted|As quoted by HubSpot|As quoted|Year one as quoted|What it should be|Your year-one estimate)/i);
-        if (m !== -1) return m;
-        return t.search(/(^|\n)[^\n]{3,90}=\s*\$[\d,]+/);
+        if (m !== -1) cands.push(m);
+        m = t.search(/(^|\n)[^\n]{3,90}=\s*\$[\d,]+/);
+        if (m !== -1) cands.push(m);
+        if (/[x\u00d7]\s*12|=\s*\$|year one|per seat|\/mo|\/seat/i.test(t) && /\$\s?[\d,]{2,}/.test(t)) {
+          var idx = t.search(/\$\s?[\d,]{2,}/); var ls = t.lastIndexOf("\n", idx); cands.push(ls === -1 ? 0 : ls);
+        }
+        return cands.length ? Math.min.apply(null, cands) : -1;
       }
       function showStreaming(t){
         var s = estimateStart(t);
