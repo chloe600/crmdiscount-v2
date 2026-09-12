@@ -208,7 +208,18 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
   function actionChips(){
     setChips([
       { label: "Get my yes or no", go: true, on: function(){ notifyParent({ crmchat_action: "book" }); } },
-      { label: "Send me the negotiation tips", on: function(){ sendToBot("Send me the negotiation tips", false); } }
+      { label: "Send me the negotiation tips", on: function(){
+          if (visitorEmail) {
+            setChips([{ label: "Get my yes or no", go: true, on: function(){ notifyParent({ crmchat_action: "book" }); } }]);
+            userSay("Send me the negotiation tips");
+            messages.push({ role: "user", content: "Send me the negotiation tips" });
+            botSay("Done \u2014 the written breakdown and the negotiation tips for a deal your size go to " + visitorEmail + " the same working day.", null, true);
+            fetch("/api/lead", { method: "POST", headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email: visitorEmail, transcript: buildTranscript(), session: SESSION_ID }) }).catch(function(){});
+          } else {
+            sendToBot("Send me the negotiation tips", false);
+          }
+        } }
     ]);
   }
 
@@ -248,7 +259,7 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
       }
       if (B.total === null || !A.rows.length || !B.rows.length) continue;
       var m = end + 1; while (m < lines.length && lines[m] === "") m++;
-      if (m < lines.length && /^Difference:/i.test(lines[m])) { diffLine = lines[m]; end = m; }
+      if (m < lines.length && /^Difference\s*[:=\u2014\-]/i.test(lines[m])) { diffLine = lines[m]; end = m; }
       ests.push({ start: start, end: end, A: A, B: B, diff: diffLine });
       i = end;
     }
@@ -471,9 +482,10 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
         if (!finalText) { el.remove(); throw new Error("empty"); }
         messages.push({ role: "assistant", content: finalText });
         el.classList.remove("building");
-        if (!renderEstimate(el, finalText)) el.textContent = finalText;
+        var carded = renderEstimate(el, finalText);
+        if (!carded) el.textContent = finalText;
         scrollDown();
-        if (/Difference:|Year one right-sized:|Year one as quoted:/.test(finalText)) actionChips();
+        if (carded || /Difference\s*[:=\u2014-]|Year one right-sized|Year one as quoted/i.test(finalText)) actionChips();
         pending = false;
         sendBtn.disabled = false;
         input.focus();
