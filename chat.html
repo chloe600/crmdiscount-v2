@@ -257,6 +257,17 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
         if (isQuotedTotal(lines[j])) break;
         if (isRow(lines[j])) B.rows.push(parseRow(lines[j]));
       }
+      if (B.total === null && A.rows.length && A.total) {
+        // Bot skipped the right-sized block: derive it — same lines, onboarding to $0 where eligible
+        B.rows = A.rows.map(function(r){
+          return /onboard|implementation|setup fee/i.test(r.lbl)
+            ? { lbl: "Onboarding, delivered by the partner agency where your deal qualifies", amt: "$0", key: r.key }
+            : { lbl: r.lbl, amt: r.amt, key: r.key };
+        });
+        var n0 = function(s){ return parseInt(String(s || "").replace(/[^\d]/g, ""), 10) || 0; };
+        B.total = "$" + B.rows.reduce(function(s, r){ return s + n0(r.amt); }, 0).toLocaleString("en-US");
+        end = i; j = i;
+      }
       if (B.total === null || !A.rows.length || !B.rows.length) continue;
       var m = end + 1; while (m < lines.length && lines[m] === "") m++;
       if (m < lines.length && /^Difference\s*[:=\u2014\-]/i.test(lines[m])) { diffLine = lines[m]; end = m; }
