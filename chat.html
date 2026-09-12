@@ -205,12 +205,14 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
     });
   }
 
+  var lastKeep = "";
   function actionChips(){
+    var primary = lastKeep ? "Save up to " + lastKeep : "Get my yes or no";
     setChips([
-      { label: "Get my yes or no", go: true, on: function(){ notifyParent({ crmchat_action: "book" }); } },
+      { label: primary, go: true, on: function(){ notifyParent({ crmchat_action: "book" }); } },
       { label: "Send me the negotiation tips", on: function(){
           if (visitorEmail) {
-            setChips([{ label: "Get my yes or no", go: true, on: function(){ notifyParent({ crmchat_action: "book" }); } }]);
+            setChips([{ label: lastKeep ? "Save up to " + lastKeep : "Get my yes or no", go: true, on: function(){ notifyParent({ crmchat_action: "book" }); } }]);
             userSay("Send me the negotiation tips");
             messages.push({ role: "user", content: "Send me the negotiation tips" });
             botSay("Done \u2014 the written breakdown and the negotiation tips for a deal your size go to " + visitorEmail + " the same working day.", null, true);
@@ -327,6 +329,7 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
     });
     if (annualApplied) { sumB = merged.reduce(function(s, r){ return s + (/^\$/.test(r.b) ? n(r.b) : 0); }, 0); B.total = "$" + sumB.toLocaleString("en-US"); diffAmt = "$" + (n(A.total) - sumB).toLocaleString("en-US"); diffPct = n(A.total) ? Math.round((n(A.total) - sumB) / n(A.total) * 100) : ""; }
     var hasZeroOnboarding = merged.some(function(r){ return /onboard/i.test(r.lbl + " " + r.blbl) && /^\$0/.test(r.b); });
+    if (diffAmt && (!lastKeep || n(diffAmt) > n(lastKeep))) lastKeep = diffAmt;
     var tier = "";
     if (multi) { var joined = A.rows.map(function(r){ return r.lbl; }).join(" "); tier = /enterprise/i.test(joined) ? " \u2014 Enterprise" : /professional|\bpro\b/i.test(joined) ? " \u2014 Professional" : /starter/i.test(joined) ? " \u2014 Starter" : ""; }
     var html = '<div class="est-head"><span>Your year-one estimate' + esc(tier) + '</span><small>HubSpot list rates</small></div>';
