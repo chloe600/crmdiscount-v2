@@ -328,9 +328,10 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
       captureLead(m[0], function(ok){
         row.remove();
         el.textContent = ok
-          ? "Saved \u2014 I\u2019ll send this chat and your results to " + m[0] + ". Back to it:"
-          : "That didn\u2019t save on my end, but I\u2019ve noted " + m[0] + " \u2014 you\u2019ll still get your results. Back to it:";
-        scrollDown(); input.focus();
+          ? "Saved \u2014 I\u2019ll send this chat and your results to " + m[0] + "."
+          : "That didn\u2019t save on my end, but I\u2019ve noted " + m[0] + " \u2014 you\u2019ll still get your results.";
+        scrollDown();
+        if (holdFirst) { holdFirst = false; setTimeout(callModel, 400); } else { input.focus(); }
       });
     }
     btn.addEventListener("click", submit);
@@ -401,6 +402,18 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
     if (!hidden) userSay(text);
     messages.push({ role: "user", content: text });
     engage();
+    if (userMsgCount === 1 && !emailGiven && !emailNudged) {
+      // First answer: ask for the email before the model replies; the reply is released on save (or on their next message)
+      emailNudged = true; holdFirst = true;
+      setTimeout(earlyEmailAsk, 350);
+      return;
+    }
+    holdFirst = false;
+    callModel();
+  }
+  var holdFirst = false;
+  function callModel(){
+    if (pending) return;
     pending = true; sendBtn.disabled = true;
     var t0 = Date.now();
     showTyping(true);
@@ -445,7 +458,6 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
         if (!renderEstimate(el, finalText)) el.textContent = finalText;
         scrollDown();
         if (/Difference:|Year one right-sized:|Year one as quoted:/.test(finalText)) actionChips();
-        if (userMsgCount === 1 && !emailGiven && !emailNudged) { emailNudged = true; setTimeout(earlyEmailAsk, 600); }
         pending = false;
         sendBtn.disabled = false;
         input.focus();
