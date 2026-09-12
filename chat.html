@@ -326,16 +326,29 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
       var v = inp.value.trim(), m = v.match(EMAIL_RE);
       if (!m) { err.textContent = "That doesn\u2019t look like an email address."; err.style.display = "block"; return; }
       if (isFreeMail(m[0])) { err.textContent = "Work email only, please \u2014 like name@yourcompany.com."; err.style.display = "block"; return; }
-      err.style.display = "none"; btn.disabled = true; inp.disabled = true;
-      visitorEmail = m[0];
-      captureLead(m[0], function(ok){
-        row.remove();
-        el.textContent = ok
-          ? "Saved \u2014 I\u2019ll send this chat and your results to " + m[0] + "."
-          : "That didn\u2019t save on my end, but I\u2019ve noted " + m[0] + " \u2014 you\u2019ll still get your results.";
-        scrollDown();
-        if (holdFirst) { holdFirst = false; setTimeout(callModel, 400); } else { input.focus(); }
-      });
+      err.style.display = "none";
+      var email = m[0];
+      visitorEmail = email; emailGiven = true; awaitingEmail = false;
+      // Optimistic: confirm instantly and let the conversation continue; the save runs in the background
+      row.remove();
+      el.textContent = "Got it \u2014 I\u2019ll send this chat and your results to " + email + ".";
+      scrollDown();
+      if (holdFirst) { holdFirst = false; callModel(); } else { input.focus(); }
+      var attempts = 0;
+      function save(){
+        attempts++;
+        fetch("/api/lead", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email, transcript: buildTranscript(), session: SESSION_ID })
+        })
+        .then(function(r){ if (!r.ok) throw new Error("lead " + r.status); })
+        .catch(function(){
+          if (attempts < 2) return setTimeout(save, 3000);
+          el.textContent = "Hmm \u2014 I couldn\u2019t save " + email + " to our list just now. Your results will still arrive if you tap \u201CSend me the negotiation tips\u201D later, or email team@crmdiscount.ai.";
+          scrollDown();
+        });
+      }
+      save();
     }
     btn.addEventListener("click", submit);
     inp.addEventListener("keydown", function(e){ if (e.key === "Enter") { e.preventDefault(); submit(); } });
