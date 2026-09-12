@@ -461,15 +461,10 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
 
   // ---------- greeting choreography ----------
   function runGreeting(){
-    showTyping(true);
-    greetTimers.push(setTimeout(function(){
-      showTyping(false);
-      typeInto(makeBubble("assistant"), M1, function(){
-        greetDone = true;
-        startIdle();
-        input.focus();
-      });
-    }, reduced ? 0 : 900));
+    // Instant greeting: no typing delay, no animation — a visitor from an ad never sees an empty chat
+    var el = makeBubble("assistant"); el.textContent = M1; scrollDown();
+    greetDone = true;
+    startIdle();
     messages.push({ role: "assistant", content: M1 });
   }
   function finishGreetingNow(){
@@ -520,12 +515,7 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
 
   var started = false;
   function startOnce(){ if (started) return; started = true; greetStarted = true; runGreeting(); }
-  if ("IntersectionObserver" in window) {
-    var io = new IntersectionObserver(function(entries){
-      if (entries.some(function(en){ return en.isIntersecting; })) { io.disconnect(); startOnce(); }
-    }, { threshold: 0.35 });
-    io.observe(document.body);
-  } else { startOnce(); }
+  startOnce(); // greeting is present from the first paint, whether or not the frame is in view yet
 })();
 </script>
 </body>
