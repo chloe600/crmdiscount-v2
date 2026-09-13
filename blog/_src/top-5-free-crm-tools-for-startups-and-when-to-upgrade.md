@@ -124,7 +124,7 @@ This is the part of the guide most people skip - and then regret. Because the si
 
 **The best CRM for your startup is not the most popular one - it is the one your team will actually use every single day. Let's find it.**
 
-**Take the 2-minute quiz**
+**[Get your HubSpot year-one estimate in two minutes →](/)**
 
 ## 5. How to Upgrade Without the Drama
 

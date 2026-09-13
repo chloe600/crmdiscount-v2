@@ -116,7 +116,7 @@ For a 10-person team needing only service capabilities, Zendesk's per-agent pric
 
 Few questions, two minutes, one clear recommendation - matched to how your business actually works.
 
-**Take the CRM quiz and cut through the noise**
+**[Get your HubSpot year-one estimate in two minutes →](/)**
 
 ## 6. The Three Business Types That Should Choose Each Platform
 
@@ -177,6 +177,6 @@ The fastest way to make it concrete is the same way it always is - answer a few 
 
 You have read the comparison. Now let's make the answer personal.
 
-Take our 2-minute quiz - a few questions about your team, your customers, and your goals - and we'll match you to the platform that belongs in your stack. **The best CRM Discount** offers are now available.
+**[Get your HubSpot year-one estimate in two minutes →](/)**
 
 **Find out which CRM is right for you**

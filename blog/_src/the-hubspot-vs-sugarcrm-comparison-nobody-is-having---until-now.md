@@ -110,7 +110,7 @@ Where SugarCRM outperforms HubSpot is in deep process customization and ERP-conn
 
 Two minutes is all it takes to cut through the comparison noise and get a recommendation based on how your business actually works.
 
-**Take the CRM quiz and find your platform**
+**[Get your HubSpot year-one estimate in two minutes →](/)**
 
 ## 5. The Business Profile That Fits Each Platform
 ![](/blog/assets/Gemini_Generated_Image_vr8d1uvr8d1uvr8d.png)
@@ -181,4 +181,4 @@ Neither platform is wrong for the right business. The one that fits is the one b
 
 Not every CRM fits every company. Few questions will tell you more than five more comparison articles.
 
-**Take the quiz and get your recommendation**
+**[Get your HubSpot year-one estimate in two minutes →](/)**

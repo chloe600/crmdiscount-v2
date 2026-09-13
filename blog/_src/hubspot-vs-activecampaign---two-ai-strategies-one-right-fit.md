@@ -169,6 +169,6 @@ Neither platform is a compromise. Both are genuinely excellent at what they are 
 
 You don't need another comparison article. You need five minutes of honest reflection on your own business setup.
 
-Take our **2-minute quiz** - tell us about your team, your goals, and your budget - and we will cut straight to the platform that fits you.
+**[Get your HubSpot year-one estimate in two minutes →](/)**
 
 **Find out which CRM is right for your business**

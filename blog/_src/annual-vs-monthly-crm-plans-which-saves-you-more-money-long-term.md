@@ -154,4 +154,4 @@ Get the platform right first. Then decide how you want to pay for it.
 
 The billing decision is the easy part once you are confident in the platform. Let's get you there.
 
-Take our two-minute quiz and walk away with a recommendation you can commit to with confidence.
+**[Get your HubSpot year-one estimate in two minutes →](/)**

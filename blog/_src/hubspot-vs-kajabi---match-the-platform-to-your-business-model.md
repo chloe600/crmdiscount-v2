@@ -119,7 +119,7 @@ Email marketing and automation, landing page builder, forms, lead capture, marke
 
 If you're building a knowledge business, the fastest path to the right platform is knowing your own business model first.
 
-**Take the 2-minute CRM quiz and get your match**
+**[Get your HubSpot year-one estimate in two minutes →](/)**
 ![](/blog/assets/Gemini_Generated_Image_czkse1czkse1czks.png)
 
 ## 5. Six Questions That Tell You Which Platform You Need
@@ -193,4 +193,4 @@ The platforms aren't competing for the same customer. They are serving different
 
 **The right platform saves you months of frustration and thousands in switching costs. Find yours now.**
 
-**Take the 2-minute quiz**
+**[Get your HubSpot year-one estimate in two minutes →](/)**

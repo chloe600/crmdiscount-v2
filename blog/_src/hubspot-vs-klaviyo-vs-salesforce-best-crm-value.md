@@ -117,7 +117,7 @@ Let's apply real numbers to three common business profiles.
 
 The fastest path to the right answer is a few honest questions about your team and your goals.
 
-**Take the 2-minute quiz and get your match**
+**[Get your HubSpot year-one estimate in two minutes →](/)**
 ![](/blog/assets/Untitled-20design-20-2-.png)
 
 ## 7. Which One Wins for Your Business Model

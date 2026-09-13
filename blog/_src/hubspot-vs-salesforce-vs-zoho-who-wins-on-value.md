@@ -199,4 +199,4 @@ The worst value in any of these three platforms comes from choosing the wrong on
 
 Knowing the options is one thing. Knowing which option is yours is another. Let's settle that now.
 
-**Take the quiz**
+**[Get your HubSpot year-one estimate in two minutes →](/)**

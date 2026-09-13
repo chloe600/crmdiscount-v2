@@ -128,7 +128,7 @@ The financial implication: starting your trial **six to eight weeks before a maj
 
 Start here - two minutes, one clear recommendation.
 
-**Take the quiz**
+**[Get your HubSpot year-one estimate in two minutes →](/)**
 
 ## 7. The Moves That Get You a Discount Any Time of Year
 
@@ -183,4 +183,4 @@ You now have the map. The next step is deciding when your business is ready to m
 
 **Don't waste a good discount on the wrong platform.**
 
-**Take the quiz first**
+**[Get your HubSpot year-one estimate in two minutes →](/)**
