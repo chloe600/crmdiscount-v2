@@ -367,6 +367,7 @@ details[open]{box-shadow:0 1px 2px rgba(18,23,43,.05),0 14px 32px rgba(18,23,43,
   box-shadow:0 1px 2px rgba(18,23,43,.05),0 18px 44px rgba(18,23,43,.08)}
 .calc-head{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:16px}
 .calc-head .hint{font-size:.9rem;color:var(--ink-soft)}
+.calc-head .hint strong{color:var(--accent);font-weight:700}
 .people{display:flex;align-items:center;gap:12px;font-size:.88rem;font-weight:600;color:var(--ink-soft);cursor:pointer}
 .people input[type=range]{width:190px;accent-color:var(--accent);cursor:pointer}
 .people input[type=range]:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:4px}
@@ -496,7 +497,7 @@ details[open]{box-shadow:0 1px 2px rgba(18,23,43,.05),0 14px 32px rgba(18,23,43,
   <div class="wrap">
     <div class="calc" id="calc">
       <div class="calc-head">
-        <span class="hint">Choose a tier to add a hub. Choose it again to remove it.</span>
+        <span class="hint"><strong>Choose a tier to add a hub and access the calculator.</strong></span>
         <label class="people"><span class="people-l">People who'll log in</span>
           <input type="range" id="calcPeople" min="1" max="50" value="5" aria-describedby="calcPeopleOut">
           <output id="calcPeopleOut" for="calcPeople">5 people</output>
@@ -518,7 +519,7 @@ details[open]{box-shadow:0 1px 2px rgba(18,23,43,.05),0 14px 32px rgba(18,23,43,
       </div>
       <div class="est" id="calcEst">
         <div class="est-lock" aria-live="polite"><div class="box">
-          <strong>Choose a tier under a hub and your year one appears here.</strong>
+          <strong>Choose a tier (Starter, Pro, Enterprise) in any of the Hubs above and your 1st year cost appears here.</strong>
           <p>Not sure which hub you need?</p>
           <button type="button" class="lock-cta" id="calcLockChat">Chat with our HubSpot AI agent</button>
         </div></div>
