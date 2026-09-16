@@ -65,11 +65,19 @@ a{color:inherit}
 .partner-chip{font-size:.78rem;font-weight:600;color:var(--ink-soft);border:1px solid var(--line);border-radius:999px;padding:6px 14px;background:var(--wash);white-space:nowrap}
 
 /* Hero */
-.hero{padding:76px 0 92px;position:relative;overflow:hidden}
+.hero{padding:44px 0 84px;position:relative;overflow:hidden}
 .hero-bg{position:absolute;inset:0;pointer-events:none;background:
   radial-gradient(600px 320px at 85% 20%, rgba(79,70,229,.10), transparent 70%),
   radial-gradient(500px 300px at 5% 90%, rgba(79,70,229,.06), transparent 70%)}
-.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;position:relative}
+.hero .wrap{position:relative}
+.hero-top{margin-bottom:22px}
+.hero-top h1{margin-bottom:14px}
+@media (max-width:640px){.hero-top .h1br{display:none}}
+.hero-top h1 .strike{text-decoration:line-through;text-decoration-color:var(--accent);text-decoration-thickness:.09em;color:var(--ink-soft)}
+.hero-top .sub{font-size:1.02rem;color:var(--ink-soft);max-width:78ch}
+.hero-bottom{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:start;margin-top:48px}
+.hero-bottom > div:first-child{padding-top:22px}
+:root{color-scheme:light}
 .eyebrow{display:inline-block;font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-deep);background:var(--tint);border-radius:999px;padding:6px 14px;margin-bottom:20px}
 .hero h1{font-size:clamp(2rem,4.2vw,3.1rem);font-weight:800;margin-bottom:18px}
 .hero h1 .strike{position:relative;white-space:nowrap}
@@ -271,17 +279,9 @@ footer a{color:var(--ink-soft)}
   .partner-chip{white-space:normal;text-align:center;font-size:.72rem;padding:5px 12px}
 }
 @media (max-width:1024px){
-  .hero .wrap{grid-template-columns:1fr;gap:0}
-  .hero .wrap > div{display:contents}
-  .hero .eyebrow{order:1}
-  .hero h1{order:2;margin-bottom:24px}
-  .hero .chat-frame-hero{order:4;margin:0 0 32px;max-width:520px;width:100%}
-  .hero .lead{order:5}
-  .hero .cta-note{order:6}
-  .hero .cta-ghost{order:7;justify-self:start;width:auto;background:var(--accent);border-color:var(--accent);color:#fff;
-    font-size:.86rem;padding:8px 15px;border-radius:9px;gap:7px;margin-top:12px}
-  .hero .cta-ghost svg{width:14px;height:14px}
-  .hero .cta-ghost:hover{background:var(--accent-deep);border-color:var(--accent-deep)}
+  .hero-bottom{grid-template-columns:1fr;gap:28px;margin-top:36px}
+  .hero-bottom > div:first-child{padding-top:0}
+  .hero-bottom .chat-frame-hero{margin:0;max-width:520px;width:100%}
 }
 @media (max-width:860px){
   .hero{padding:48px 0 60px}
@@ -295,7 +295,7 @@ footer a{color:var(--ink-soft)}
   .hero{padding:22px 0 48px}
   .eyebrow{font-size:.64rem;letter-spacing:.06em;padding:4px 10px;margin-bottom:10px}
   .hero h1{font-size:1.62rem;line-height:1.12;margin-bottom:12px}
-  .hero .chat-frame-hero{margin:0 0 24px}
+  .hero-bottom .chat-frame-hero{margin:0}
   .result-card{transform:none;margin:0 auto}
   .grid3{grid-template-columns:1fr}
   section{padding:60px 0}
@@ -361,6 +361,111 @@ details[open]{box-shadow:0 1px 2px rgba(18,23,43,.05),0 14px 32px rgba(18,23,43,
 @media (prefers-reduced-motion:reduce){.chat-frame-hero{transition:none}.chat-frame-hero:hover{transform:none}}
 @media (max-width:860px){.chat-frame-hero{margin:0 auto;max-width:100%}}
 @media (max-width:560px){.chat-frame{height:70vh;min-height:480px}.chat-frame-hero{height:66vh;min-height:480px;max-height:680px}}
+
+/* ===== Year-one calculator (hero) ===== */
+.calc{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:20px 22px 18px;
+  box-shadow:0 1px 2px rgba(18,23,43,.05),0 18px 44px rgba(18,23,43,.08)}
+.calc-head{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:16px}
+.calc-head .hint{font-size:.9rem;color:var(--ink-soft)}
+.people{display:flex;align-items:center;gap:12px;font-size:.88rem;font-weight:600;color:var(--ink-soft);cursor:pointer}
+.people input[type=range]{width:190px;accent-color:var(--accent);cursor:pointer}
+.people input[type=range]:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:4px}
+.people output{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.05rem;color:var(--ink);min-width:7ch;font-variant-numeric:tabular-nums}
+.hubs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:900px){.tiers{gap:4px}.tier{font-size:.68rem;padding:4px 7px}}
+@media (max-width:720px){.hubs{grid-template-columns:repeat(2,1fr)}}
+.hub{text-align:center;min-width:0}
+.hub-name{display:block;font-weight:700;font-size:.92rem;letter-spacing:-.01em;line-height:1.3;color:var(--ink);transition:color .15s ease}
+.hub.on .hub-name{color:var(--accent)}
+.tiers{display:flex;gap:6px;justify-content:center;margin-top:7px;flex-wrap:wrap}
+.tier{font:inherit;font-size:.74rem;font-weight:600;line-height:1.2;padding:5px 11px;border-radius:999px;border:1px solid var(--line);
+  background:var(--paper);color:var(--ink-soft);cursor:pointer;white-space:nowrap;transition:background .12s ease,border-color .12s ease,color .12s ease}
+.tier:hover{border-color:var(--accent);color:var(--accent-deep)}
+.tier[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.tier:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.est{margin-top:18px;overflow-x:auto;-webkit-overflow-scrolling:touch;position:relative}
+.est.blurred table{filter:blur(6px);opacity:.55;pointer-events:none;user-select:none}
+.calc.is-empty .keep,.calc.is-empty .calc-mail{display:none}
+.est-lock{position:absolute;inset:0;z-index:5;display:none;align-items:center;justify-content:center;padding:24px;text-align:center}
+.est.blurred .est-lock{display:flex}
+.est-lock .box{position:relative;z-index:6;background:#FFFFFF;border:1px solid var(--line);border-radius:14px;padding:18px 22px 20px;color:var(--ink);
+  box-shadow:0 1px 2px rgba(18,23,43,.06),0 14px 34px rgba(18,23,43,.14);max-width:38ch}
+.est-lock strong{display:block;font-weight:600;font-size:.95rem;line-height:1.45}
+.est-lock p{margin-top:8px;font-size:.88rem;color:var(--ink-soft)}
+.lock-cta{margin-top:12px;font:inherit;font-weight:600;font-size:.9rem;color:#fff;background:var(--accent);border:none;border-radius:10px;padding:10px 18px;cursor:pointer;transition:background .15s ease}
+.lock-cta:hover{background:var(--accent-deep)}
+.lock-cta:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+@media (prefers-reduced-motion:no-preference){.est table{transition:filter .25s ease,opacity .25s ease}}
+.est table{width:100%;border-collapse:separate;border-spacing:0;font-size:.9rem;min-width:600px}
+.est th,.est td{padding:11px 12px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap;vertical-align:top}
+.est th:first-child,.est td:first-child{text-align:left;white-space:normal;min-width:190px;position:sticky;left:0;background:var(--paper);z-index:1}
+.est thead th{background:var(--wash);font-weight:700;font-size:.82rem;line-height:1.3;vertical-align:bottom;white-space:normal}
+.est thead th:first-child{background:var(--wash);border-radius:10px 0 0 0}
+.est thead th:last-child{border-radius:0 10px 0 0}
+.est thead th small{display:block;font-weight:500;color:var(--ink-soft);font-size:.72rem;margin-top:3px}
+.est td{font-variant-numeric:tabular-nums lining-nums}
+.est td .note{display:block;font-size:.74rem;font-weight:400;color:var(--ink-soft);white-space:normal;margin-top:1px}
+.est .us{background:var(--tint);color:var(--accent-deep);font-weight:600}
+.est thead th.us small{color:var(--accent-deep);opacity:.85}
+.est td.us .note{color:var(--accent-deep);opacity:.8}
+.est td.zero{color:var(--green)}
+.est tfoot td{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.08rem;border-bottom:none;border-top:2px solid var(--ink);padding-top:13px}
+.est tfoot td:first-child{font-size:.95rem}
+.est td.empty{text-align:left;color:var(--ink-soft);white-space:normal;padding:22px 12px}
+.keep{margin-top:16px;background:#178F69;color:#fff;border-radius:14px;padding:22px 24px;display:grid;grid-template-columns:1.15fr 1fr;gap:18px 28px;align-items:center;
+  box-shadow:0 1px 2px rgba(18,23,43,.12),0 10px 26px rgba(23,143,105,.24)}
+.keep-txt{min-width:0}
+.keep-txt strong{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:1.5rem;font-weight:800;line-height:1.12;letter-spacing:-.01em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.keep-txt p{margin-top:8px;font-size:.86rem;color:rgba(255,255,255,.9);line-height:1.5;max-width:46ch}
+.keep-form{min-width:0}
+.keep-form input{width:100%;border:1.5px solid rgba(255,255,255,.4);border-radius:10px;padding:12px 14px;font:inherit;font-size:.95rem;color:var(--ink);background:#fff}
+.keep-form input:focus{outline:none;border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.35)}
+.keep-form input.bad{border-color:#FFB4B4;box-shadow:0 0 0 3px rgba(255,180,180,.35)}
+.keep-form .go{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:8px;padding:12px 16px;border:none;border-radius:10px;
+  font:inherit;font-weight:700;font-size:.98rem;color:#0F6B4E;background:#fff;cursor:pointer;text-decoration:none;box-shadow:0 1px 2px rgba(18,23,43,.12);transition:background .15s ease,transform .15s ease}
+.keep-form .go:hover{background:#E6F7F0;transform:translateY(-1px)}
+.keep-form .go:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.keep-form .go.nudge{animation:nudge .35s ease}
+@keyframes nudge{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.keep-form .cta-ghost.go{background:#fff;border-color:#fff;color:#0F6B4E}
+.keep-form .cta-ghost.go:hover{background:#E6F7F0;border-color:#E6F7F0}
+.keep-form .helper{display:block;margin-top:8px;font-size:.74rem;color:rgba(255,255,255,.82);line-height:1.45}
+.keep-form .linkish{display:block;margin-top:6px;padding:0;font:inherit;font-size:.8rem;font-weight:600;color:#fff;background:none;border:none;cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-align:left}
+.keep-form .linkish:hover{color:#D5F5E8}
+@media (max-width:760px){.keep{grid-template-columns:1fr;gap:14px}}
+.calc-fine{margin-top:12px;font-size:.76rem;color:var(--ink-soft);line-height:1.55;max-width:96ch}
+.calc-foot{color:var(--ink);font-size:.8rem;margin-top:14px}
+.calc-foot strong{color:var(--accent-deep)}
+.calc-more,.calc-more[open]{margin:6px 0 0;padding:0;border:none;border-radius:0;background:transparent;box-shadow:none;font-size:.76rem;color:var(--ink-soft)}
+.calc-more summary{display:inline-flex;gap:4px;align-items:center;font-weight:500;font-size:.76rem;color:var(--ink-soft);text-decoration:underline;text-underline-offset:3px;list-style:none}
+.calc-more summary::after{content:"+";font-size:.9rem;color:var(--ink-soft);font-weight:400}
+.calc-more[open] summary::after{content:"–"}
+.calc-more summary::-webkit-details-marker{display:none}
+.calc-more summary:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:3px}
+.calc-more p{margin-top:6px;font-size:.76rem;color:var(--ink-soft);line-height:1.55;max-width:96ch}
+@media (max-width:560px){
+  .calc{padding:14px 12px 12px;border-radius:14px}
+  .hubs{grid-template-columns:repeat(2,1fr);gap:8px}
+  .hub-name{font-size:.84rem}
+  .calc-head{gap:10px;margin-bottom:14px}
+  .people{width:100%;flex-wrap:wrap;gap:8px 10px}
+  .people-l{flex:0 0 100%}
+  .people input[type=range]{flex:1;width:auto}
+  .people output{min-width:0;text-align:right;white-space:nowrap}
+  .tiers{gap:4px}
+  .tier{font-size:.63rem;padding:4px 6px}
+  .est table{font-size:.82rem;min-width:0}
+  .est th,.est td{padding:9px 8px}
+  .est th:first-child,.est td:first-child{min-width:140px;position:static}
+  .est th:nth-child(3),.est td:nth-child(3){display:none}
+  .est thead th{font-size:.8rem}
+  .est thead th small{display:none}
+  .est td.us .note{display:none}
+  .est tfoot td{font-size:1rem}
+  .keep{padding:18px 16px}
+  .keep-txt strong{font-size:1.25rem}
+}
+@media (prefers-reduced-motion:reduce){.hub-name,.tier,.keep-form .go{transition:none}.keep-form .go.nudge{animation:none}.keep-form .go:hover{transform:none}}
 </style>
 </head>
 <body>
@@ -383,17 +488,80 @@ details[open]{box-shadow:0 1px 2px rgba(18,23,43,.05),0 14px 32px rgba(18,23,43,
 
 <header class="hero">
   <div class="hero-bg" aria-hidden="true"></div>
+  <div class="wrap hero-top">
+    <span class="eyebrow">Free HubSpot pricing calculator</span>
+    <h1>What HubSpot should actually cost you.<br class="h1br"> Find out before you <s class="strike">overpay</s>.</h1>
+    <p class="sub">Pick a tier under each hub. You'll see three prices side by side: HubSpot's list price, what you'd typically pay negotiating alone, and what the same deal costs with us, onboarding at $0.*</p>
+  </div>
   <div class="wrap">
+    <div class="calc" id="calc">
+      <div class="calc-head">
+        <span class="hint">Choose a tier to add a hub. Choose it again to remove it.</span>
+        <label class="people"><span class="people-l">People who'll log in</span>
+          <input type="range" id="calcPeople" min="1" max="50" value="5" aria-describedby="calcPeopleOut">
+          <output id="calcPeopleOut" for="calcPeople">5 people</output>
+        </label>
+      </div>
+      <div class="hubs" id="calcHubs">
+        <div class="hub" data-hub="sales"><span class="hub-name">Sales Hub</span>
+          <div class="tiers" role="group" aria-label="Sales Hub tier"><button type="button" class="tier" data-tier="starter" aria-pressed="false">Starter</button><button type="button" class="tier" data-tier="pro" aria-pressed="false">Pro</button><button type="button" class="tier" data-tier="ent" aria-pressed="false">Enterprise</button></div></div>
+        <div class="hub" data-hub="marketing"><span class="hub-name">Marketing Hub</span>
+          <div class="tiers" role="group" aria-label="Marketing Hub tier"><button type="button" class="tier" data-tier="starter" aria-pressed="false">Starter</button><button type="button" class="tier" data-tier="pro" aria-pressed="false">Pro</button><button type="button" class="tier" data-tier="ent" aria-pressed="false">Enterprise</button></div></div>
+        <div class="hub" data-hub="service"><span class="hub-name">Service Hub</span>
+          <div class="tiers" role="group" aria-label="Service Hub tier"><button type="button" class="tier" data-tier="starter" aria-pressed="false">Starter</button><button type="button" class="tier" data-tier="pro" aria-pressed="false">Pro</button><button type="button" class="tier" data-tier="ent" aria-pressed="false">Enterprise</button></div></div>
+        <div class="hub" data-hub="content"><span class="hub-name">Content Hub</span>
+          <div class="tiers" role="group" aria-label="Content Hub tier"><button type="button" class="tier" data-tier="starter" aria-pressed="false">Starter</button><button type="button" class="tier" data-tier="pro" aria-pressed="false">Pro</button><button type="button" class="tier" data-tier="ent" aria-pressed="false">Enterprise</button></div></div>
+        <div class="hub" data-hub="data"><span class="hub-name">Data Hub</span>
+          <div class="tiers" role="group" aria-label="Data Hub tier"><button type="button" class="tier" data-tier="starter" aria-pressed="false">Starter</button><button type="button" class="tier" data-tier="pro" aria-pressed="false">Pro</button><button type="button" class="tier" data-tier="ent" aria-pressed="false">Enterprise</button></div></div>
+        <div class="hub" data-hub="revenue"><span class="hub-name">Revenue Hub</span>
+          <div class="tiers" role="group" aria-label="Revenue Hub tier"><button type="button" class="tier" data-tier="free" aria-pressed="false">Free</button><button type="button" class="tier" data-tier="pro" aria-pressed="false">Pro</button><button type="button" class="tier" data-tier="ent" aria-pressed="false">Enterprise</button></div></div>
+      </div>
+      <div class="est" id="calcEst">
+        <div class="est-lock" aria-live="polite"><div class="box">
+          <strong>Choose a tier under a hub and your year one appears here.</strong>
+          <p>Not sure which hub you need?</p>
+          <button type="button" class="lock-cta" id="calcLockChat">Chat with our HubSpot AI agent</button>
+        </div></div>
+        <table id="calcTable">
+          <thead><tr>
+            <th scope="col">Item</th>
+            <th scope="col">HubSpot price<small>Billed monthly, list price</small></th>
+            <th scope="col">If you negotiate on your own<small>About 10% off list*</small></th>
+            <th scope="col" class="us">If we help you<small>About 30% off list* &middot; onboarding at $0</small></th>
+          </tr></thead>
+          <tbody id="calcRows"></tbody>
+          <tfoot><tr><td>Year one</td><td id="calcTotM"></td><td id="calcTotA"></td><td class="us" id="calcTotU"></td></tr></tfoot>
+        </table>
+      </div>
+      <div class="keep" id="calcKeep">
+        <div class="keep-txt">
+          <strong id="calcKeepNum"></strong>
+          <p id="calcKeepText"></p>
+        </div>
+        <div class="keep-form" id="calcForm">
+          <div class="ask" id="calcAsk">
+            <input type="email" id="calcEmail" placeholder="you@company.com" autocomplete="email" inputmode="email" aria-label="Work email" aria-describedby="calcHelper">
+            <button type="button" class="go" id="calcSay"><span id="calcGoText">Save</span></button>
+            <small class="helper" id="calcHelper">You get the table and the negotiation tips, and it unlocks the assistant. No newsletter.</small>
+            <button type="button" class="linkish" id="calcToChat">Not sure which hub you need? Ask the AI assistant</button>
+          </div>
+          <div class="done" id="calcDone" hidden>
+            <a class="cta-ghost go" href="#book" data-book data-position="calculator" id="calcCta">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4 M16 2v4 M3 9h18"/></svg>
+              <span id="calcCtaText">Book 20 minutes</span>
+            </a>
+            <small class="helper">Twenty minutes with us before you talk to HubSpot, to lock the number in.</small>
+          </div>
+        </div>
+      </div>
+      <p class="calc-fine calc-foot">* Illustrative. Discounts depend on deal size &mdash; in our experience <strong>20&ndash;70% off list</strong>, more for multi-hub and Enterprise. Starter and Free aren't discounted; onboarding at $0 where your deal qualifies. HubSpot's published 2026 list prices.</p>
+      <details class="calc-more"><summary>How this is calculated</summary><p>Everyone gets a seat in every hub you pick; included seats are counted once, and a Sales, Service or Revenue seat covers core access. Contacts beyond the included tier, credits and add-ons aren't in the table &mdash; the assistant itemizes them.</p></details>
+    </div>
+  </div>
+  <div class="wrap hero-bottom">
     <div>
-      <span class="eyebrow">Before you sign &middot; Free chat consult</span>
-      <h1>Buying HubSpot for the first time? You're probably about to <span class="strike">overbuy it.</span></h1>
-      <p class="lead">Most pages telling you what HubSpot should cost want you to buy more of it. CRMdiscount is independent &mdash; not a HubSpot partner &mdash; built by RevOps operators whose agency is one, certified and disclosed. We scope, negotiate and implement HubSpot every week, and we've watched most first-time buyers sign for more of it than their stage of business needed, at a price nobody told them was movable.</p>
-      <p class="lead">Ask the assistant &mdash; a live HubSpot pricing calculator &mdash; before your quote turns into a contract. Two minutes and you'll have an itemized estimate of what year one should actually cost &mdash; including the onboarding fee, <strong>$1,500 to $7,000</strong>, which stops being movable the moment you sign.</p>
+      <p class="lead">Ask the assistant before your quote turns into a contract. Two minutes and you'll have an itemized estimate of what year one should actually cost &mdash; including the onboarding fee, <strong>$1,500 to $7,000</strong>, which stops being movable the moment you sign.</p>
       <span class="cta-note" style="margin-top:4px">Free &middot; No credit card &middot; The estimate is yours either way &middot; Not HubSpot, Inc.</span>
-      <a class="cta-ghost" href="#book" data-book data-position="hero">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4 M16 2v4 M3 9h18"/></svg>
-        Save up to $7,000
-      </a>
     </div>
     <div>
       <iframe class="chat-frame chat-frame-hero" id="chatFrame" src="/chat.html" title="CRMdiscount AI assistant"></iframe>
@@ -707,6 +875,15 @@ var BOOKING_URL = "https://calendly.com/team-crmdiscount/20min";
     if (e.data && e.data.crmchat_event === "chat_engaged") {
       push("chat_engaged"); // Google Ads conversion candidate
     }
+    if (e.data && (e.data.crmchat_event === "chat_unlocked" || e.data.crmchat_event === "chat_estimate")) {
+      push(e.data.crmchat_event);
+    }
+    if (e.data && e.data.crmcalc_set && window.__calcApply) {
+      window.__calcApply(e.data.crmcalc_set); // the chat filled in or changed the calculator
+    }
+    if (e.data && e.data.crmcalc_email && window.__calcMarkSent) {
+      window.__calcMarkSent(String(e.data.crmcalc_email)); // email came in through the chat: mark the green box as sent
+    }
     if (e.data && e.data.crmchat_action === "book") {
       push("booking_click", { cta_position: "chat" });
       openBooking();
@@ -888,6 +1065,233 @@ var BOOKING_URL = "https://calendly.com/team-crmdiscount/20min";
   if(autoplay){
     timer = setInterval(function(){ show((current + 1) % btns.length, true); }, 6000);
   }
+})();
+// ============================================================
+// Year-one calculator (hero). Published 2026 US list prices.
+// Columns: list on monthly billing / annual-billing published rate /
+// annual rate with onboarding at $0. Nothing here is a negotiated figure.
+// ============================================================
+(function(){
+  var TIER = {starter:'Starter', pro:'Professional', ent:'Enterprise', free:'Free'};
+  var HUBS = {
+    sales:     {name:'Sales Hub',     kind:'seat', t:{starter:{m:20,a:15}, pro:{m:100,a:90,onb:1500}, ent:{m:150,a:150,onb:3500}}},
+    marketing: {name:'Marketing Hub', kind:'core', t:{starter:{m:20,a:15}, pro:{m:890,a:800,inc:3,xm:50,xa:45,onb:3000}, ent:{m:3600,a:3600,inc:5,xm:75,xa:75,onb:7000}}},
+    service:   {name:'Service Hub',   kind:'seat', t:{starter:{m:20,a:15}, pro:{m:100,a:90,onb:1500}, ent:{m:150,a:150,onb:3500}}},
+    content:   {name:'Content Hub',   kind:'core', t:{starter:{m:20,a:15}, pro:{m:500,a:450,inc:3,xm:50,xa:45}, ent:{m:1500,a:1500,inc:5,xm:75,xa:75}}},
+    data:      {name:'Data Hub',      kind:'core', t:{starter:{m:20,a:15}, pro:{m:800,a:720,inc:1,xm:50,xa:45}, ent:{m:2000,a:2000,inc:1,xm:75,xa:75}}},
+    revenue:   {name:'Revenue Hub',   kind:'seat', t:{free:{m:0,a:0}, pro:{m:95,a:85}, ent:{m:140,a:140}}}
+  };
+  var ORDER = ['sales','marketing','service','content','data','revenue'];
+  var SESSION = Math.random().toString(36).slice(2) + Date.now().toString(36); // shared with the chat iframe so both sheets join
+  var FREE_MAIL = ['gmail.com','yahoo.com','outlook.com','hotmail.com','aol.com','icloud.com','proton.me','protonmail.com','gmx.com','yandex.com','mail.com','live.com','msn.com','ymail.com'];
+  function isFreeMail(e){ var d = (e.split('@')[1] || '').toLowerCase(); return FREE_MAIL.indexOf(d) !== -1; }
+  // Illustrative discounts off list on Professional/Enterprise subscription lines (see the * footnote).
+  var DISC_SELF = 0.10;   // negotiating alone
+  var DISC_US   = 0.30;   // negotiated by us
+  var sel = {};
+  var people = 5, used = false;
+
+  var rowsEl = document.getElementById('calcRows');
+  if(!rowsEl) return;
+  var totM = document.getElementById('calcTotM'), totA = document.getElementById('calcTotA'), totU = document.getElementById('calcTotU');
+  var keepNum = document.getElementById('calcKeepNum'), keepText = document.getElementById('calcKeepText');
+  var keepEl = document.getElementById('calcKeep'), askEl = document.getElementById('calcAsk'), doneEl = document.getElementById('calcDone');
+  var mailInp = document.getElementById('calcEmail'), sayBtn = document.getElementById('calcSay'), goText = document.getElementById('calcGoText'), helper = document.getElementById('calcHelper'), sentEmail = null;
+  var helperDefault = helper.textContent;
+  var range = document.getElementById('calcPeople'), out = document.getElementById('calcPeopleOut');
+
+  function money(v){ return '$' + Math.round(v).toLocaleString('en-US'); }
+  function plural(n, w){ return n + ' ' + w + (n === 1 ? '' : 's'); }
+
+  function compute(useSel){
+    var S = useSel || sel;
+    var n = people, rows = [], seatPE = [], corePE = [], starters = [], free = [];
+    ORDER.forEach(function(k){
+      var t = S[k]; if(!t) return;
+      if(t === 'free') free.push(k);
+      else if(t === 'starter') starters.push(k);
+      else if(HUBS[k].kind === 'seat') seatPE.push(k);
+      else corePE.push(k);
+    });
+    function disc(list){ return {m:list, a:list*(1-DISC_SELF), u:list*(1-DISC_US)}; }
+    seatPE.forEach(function(k){
+      var h = HUBS[k], p = h.t[S[k]], d = disc(n*p.m*12);
+      rows.push({l:h.name + ' ' + TIER[S[k]], s:plural(n,'seat') + ' \u00d7 $' + p.m + '/mo', m:d.m, a:d.a, u:d.u});
+    });
+    var inc = 0, xm = 0, xa = 0, xt = '';
+    corePE.forEach(function(k){
+      var h = HUBS[k], p = h.t[S[k]];
+      var d = disc(p.m*12);
+      rows.push({l:h.name + ' ' + TIER[S[k]], s:plural(p.inc,'core seat') + ' included', m:d.m, a:d.a, u:d.u});
+      if(p.inc > inc) inc = p.inc;
+      if(p.xm > xm){ xm = p.xm; xa = p.xa; xt = TIER[S[k]]; }
+    });
+    if(corePE.length){
+      var covered = seatPE.length ? n : 0;
+      var extra = Math.max(0, n - covered - inc);
+      if(extra > 0){ var dx = disc(extra*xm*12); rows.push({l:'Extra core seats', s:extra + ' \u00d7 $' + xm + '/mo (' + xt + ')', m:dx.m, a:dx.a, u:dx.u}); }
+    }
+    if(starters.length){
+      var names = starters.map(function(k){ return HUBS[k].name; }).join(', ');
+      if(seatPE.length || corePE.length) rows.push({l:names + ' Starter', s:'covered by the seats above', m:0, a:0, u:0});
+      else rows.push({l:'Starter seats \u00b7 ' + names, s:n + ' \u00d7 $20/mo \u00b7 one Starter seat covers every Starter hub', m:n*20*12, a:n*15*12, u:n*15*12});
+    }
+    if(free.length) rows.push({l:'Revenue Hub Free', s:'invoices and payments for up to 2 users \u00b7 fees per transaction', m:0, a:0, u:0});
+    var onb = 0;
+    ORDER.forEach(function(k){
+      var t = S[k]; if(!t) return; var p = HUBS[k].t[t];
+      if(p.onb){ onb += p.onb; rows.push({l:'Onboarding \u00b7 ' + HUBS[k].name + ' ' + TIER[t], s:'required when you buy direct', m:p.onb, a:p.onb, u:0, onb:true}); }
+    });
+    return {rows:rows, onb:onb};
+  }
+
+  var estEl = document.getElementById('calcEst');
+  function postState(){
+    var f = document.getElementById('chatFrame');
+    if (f && f.contentWindow && window.__calcState) { try { f.contentWindow.postMessage({crmcalc: window.__calcState}, '*'); } catch(e){} }
+  }
+  (function(){ var f = document.getElementById('chatFrame'); if (f && f.tagName === 'IFRAME') f.addEventListener('load', postState); })();
+  function calcTranscript(){
+    var st = window.__calcState || {};
+    return 'Calculator lead\n' +
+      'Hubs: ' + (st.hubs && st.hubs.length ? st.hubs.map(function(h){ return h.hub + ' ' + h.tier; }).join(', ') : 'none') + '\n' +
+      'People: ' + st.people + '\n' +
+      'Year one - list ' + money(st.list || 0) + ' / negotiating alone ' + money(st.self || 0) + ' / with us ' + money(st.us || 0) + ' / onboarding in scope ' + money(st.onboarding || 0) + '\n' +
+      (st.rowsText || '');
+  }
+  // The chat can hand a configuration back (cold visitor described their setup, or the bot recommended a change)
+  window.__calcApply = function(cfg){
+    if (!cfg) return;
+    if (cfg.hubs) ORDER.forEach(function(k){
+      if (!(k in cfg.hubs)) return;
+      var t = cfg.hubs[k];
+      if (t === 'none') delete sel[k];
+      else if (HUBS[k].t[t]) sel[k] = t;
+      var hubEl = document.querySelector('#calcHubs .hub[data-hub="' + k + '"]');
+      if (hubEl) {
+        hubEl.querySelectorAll('.tier').forEach(function(b){ b.setAttribute('aria-pressed', sel[k] === b.getAttribute('data-tier') ? 'true' : 'false'); });
+        hubEl.classList.toggle('on', !!sel[k]);
+      }
+    });
+    if (cfg.people) { people = Math.max(1, Math.min(50, parseInt(cfg.people, 10) || people)); range.value = people; out.textContent = plural(people, 'person').replace('persons', 'people'); }
+    render(); touched();
+  };
+  function render(){
+    var r = compute(), tm = 0, ta = 0, tu = 0, html = '';
+    var empty = !r.rows.length;
+    if(empty){ r = compute({sales:'pro', marketing:'pro'}); r.placeholder = true; }
+    estEl.classList.toggle('blurred', empty);
+    document.getElementById('calc').classList.toggle('is-empty', empty);
+    document.getElementById('calcTable').setAttribute('aria-hidden', empty ? 'true' : 'false');
+    r.rows.forEach(function(x){
+      tm += x.m; ta += x.a; tu += x.u;
+      html += '<tr><td>' + x.l + '<span class="note">' + x.s + '</span></td>' +
+              '<td>' + money(x.m) + '</td><td>' + money(x.a) + '</td>' +
+              '<td class="us' + (x.onb ? ' zero' : '') + '">' + money(x.u) + (x.onb ? '<span class="note">delivered by a certified partner</span>' : '') + '</td></tr>';
+    });
+    rowsEl.innerHTML = html;
+    totM.textContent = money(tm); totA.textContent = money(ta); totU.textContent = money(tu);
+    // Hand the current selection to the assistant so its greeting starts from the table
+    var state = { hubs: empty ? [] : ORDER.filter(function(k){ return sel[k]; }).map(function(k){ return {hub:HUBS[k].name, tier:TIER[sel[k]]}; }),
+                  people: people, list: empty ? 0 : tm, self: empty ? 0 : ta, us: empty ? 0 : tu, onboarding: empty ? 0 : r.onb,
+                  session: SESSION, email: sentEmail || '',
+                  rowsText: empty ? '' : r.rows.map(function(x){ return x.l.replace(/&times;/g,'x').replace(/&middot;/g,'-') + ' (' + x.s.replace(/&times;/g,'x').replace(/&middot;/g,'-') + '): list ' + money(x.m) + ' / alone ' + money(x.a) + ' / with us ' + money(x.u); }).join('\n') };
+    window.__calcState = state;
+    try { window.dispatchEvent(new CustomEvent('crmcalc', {detail: state})); } catch(e){}
+    postState();
+
+    var keep = tm - tu;
+    var hasPE = ORDER.some(function(k){ return sel[k] && sel[k] !== 'starter' && sel[k] !== 'free'; });
+    var pct = tm > 0 ? Math.round(keep / tm * 100) : 0;
+    var dealText = hasPE && keep > 0
+      ? 'The subscription at ' + Math.round(DISC_US*100) + '% off list' + (r.onb > 0 ? ' and the ' + money(r.onb) + ' onboarding fee at $0' : '') + ', where your deal qualifies.*'
+      : '';
+    if(sentEmail){
+      keepNum.textContent = 'Sent to ' + sentEmail;
+      keepText.textContent = (hasPE && keep > 0 ? 'Your ' + money(keep) + ' deal and the negotiation tips are on the way. ' : 'Your estimate and the negotiation tips are on the way. ') + 'The assistant below is unlocked.';
+    } else if(empty){
+      keepNum.textContent = 'Your year one';
+      keepText.textContent = 'Choose a tier under at least one hub above. The table fills in as you go.';
+    } else if(hasPE && keep > 0){
+      keepNum.textContent = 'Enter your email to save ' + money(keep);
+      keepText.textContent = pct + '% of year one. ' + dealText;
+      goText.textContent = 'Save ' + money(keep);
+    } else {
+      keepNum.textContent = 'Starter is fixed-price \u2014 buy it direct today';
+      keepText.textContent = 'Professional is where the discount and the onboarding fee start. Enter your email for the numbers for when you get there.';
+      goText.textContent = 'Send it';
+    }
+  }
+
+  var EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+  window.__calcMarkSent = function(email){
+    if (sentEmail) return;
+    sentEmail = email; keepEl.classList.add('sent'); sayBtn.disabled = true;
+    askEl.hidden = true; doneEl.hidden = false;
+    render();
+  };
+  function submitEmail(){
+    var v = mailInp.value.trim();
+    if(!EMAIL_RE.test(v) || isFreeMail(v)){
+      mailInp.classList.add('bad'); mailInp.focus();
+      helper.textContent = !v ? 'Add your email first.' : !EMAIL_RE.test(v) ? 'That doesn\u2019t look like an email address.' : 'Work email only, please \u2014 like name@yourcompany.com.';
+      sayBtn.classList.remove('nudge'); void sayBtn.offsetWidth; sayBtn.classList.add('nudge');
+      return;
+    }
+    mailInp.classList.remove('bad'); helper.textContent = helperDefault;
+    var payload = { email: v, transcript: calcTranscript(), session: SESSION };
+    try { fetch('/api/lead', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload), keepalive: true }).catch(function(){}); } catch(e){}
+    if(typeof gtag === 'function') gtag('event', 'calculator_email', { hubs: (window.__calcState && window.__calcState.hubs || []).length });
+    var f = document.getElementById('chatFrame'); if(f && f.contentWindow){ try { f.contentWindow.postMessage({crmcalc_email: v}, '*'); } catch(e){} }
+    try { window.dispatchEvent(new CustomEvent('crmcalc_email', {detail:{email: v}})); } catch(e){}
+    window.__calcMarkSent(v);
+  }
+  sayBtn.addEventListener('click', function(){ if(!sentEmail) submitEmail(); });
+  mailInp.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); submitEmail(); } });
+  mailInp.addEventListener('input', function(){ mailInp.classList.remove('bad'); helper.textContent = helperDefault; });
+  var toChat = document.getElementById('calcToChat');
+  if(toChat) toChat.addEventListener('click', function(){
+    if(typeof gtag === 'function') gtag('event', 'calculator_to_chat', {from:'banner'});
+    window.__calcGoToChat();
+  });
+
+  window.__calcGoToChat = function(){
+    var f = document.getElementById('chatFrame'); if(!f) return;
+    f.scrollIntoView({behavior:'smooth', block:'center'});
+    if(f.contentWindow){ try { f.contentWindow.postMessage({crmcalc_focus:true}, '*'); } catch(e){} }
+  };
+  var lockBtn = document.getElementById('calcLockChat');
+  if(lockBtn) lockBtn.addEventListener('click', function(){
+    if(typeof gtag === 'function') gtag('event', 'calculator_to_chat', {from:'blurred_table'});
+    window.__calcGoToChat();
+  });
+
+  function touched(){
+    if(used) return; used = true;
+    if(typeof gtag === 'function'){
+      var hubs = ORDER.filter(function(k){ return sel[k]; }).map(function(k){ return k + ':' + sel[k]; }).join(',');
+      gtag('event', 'calculator_used', { hubs: hubs, people: people });
+    }
+  }
+
+  document.querySelectorAll('#calcHubs .hub').forEach(function(hubEl){
+    var key = hubEl.getAttribute('data-hub');
+    hubEl.querySelectorAll('.tier').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var t = btn.getAttribute('data-tier');
+        if(sel[key] === t) delete sel[key]; else sel[key] = t;
+        hubEl.querySelectorAll('.tier').forEach(function(b){ b.setAttribute('aria-pressed', sel[key] === b.getAttribute('data-tier') ? 'true' : 'false'); });
+        hubEl.classList.toggle('on', !!sel[key]);
+        render(); touched();
+      });
+    });
+  });
+  range.addEventListener('input', function(){
+    people = parseInt(range.value, 10) || 1;
+    out.textContent = plural(people, 'person').replace('persons', 'people');
+    render(); touched();
+  });
+  render();
 })();
 </script>
 </body>
