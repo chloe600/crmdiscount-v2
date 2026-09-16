@@ -96,6 +96,15 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--
 :focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
 html,body{touch-action:manipulation;overscroll-behavior:contain}
 @media (hover:none) and (pointer:coarse){ .in{font-size:16px} }
+
+/* email gate + locked state (calculator-aware chat) */
+.b.bot .gaterow{display:flex;gap:6px;margin-top:10px}
+.b.bot .gaterow input{flex:1;min-width:0;border:1.5px solid var(--line,#E4E7F0);border-radius:10px;padding:9px 12px;font:inherit;font-size:.9rem;color:inherit;background:#fff;outline:none}
+.b.bot .gaterow input:focus{border-color:var(--accent,#4F46E5)}
+.b.bot .gaterow button{font:inherit;font-weight:600;font-size:.86rem;background:var(--accent-deep,#4338CA);color:#fff;border:none;border-radius:10px;padding:9px 14px;cursor:pointer;white-space:nowrap}
+.b.bot .gatehelp{display:block;margin-top:6px;font-size:.74rem;opacity:.7}
+.b.bot .gateerr{display:none;margin-top:6px;font-size:.78rem;color:#D14343}
+body.locked .inrow{opacity:.45;pointer-events:none}
 </style>
 </head>
 <body>
@@ -127,7 +136,9 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
   var awaitingEmail = false, emailGiven = false, emailNudged = false, userMsgCount = 0, FREE_LIMIT = 15, visitorEmail = "";
 
   // ---------- copy ----------
-  var M1 = "Hi \u2014 I\u2019m your AI assistant. I\u2019ll calculate your real HubSpot price and show you what you can knock off it. Which hubs are you looking at?";
+  var M1 = "Hi \u2014 tell me what you\u2019re trying to do with HubSpot (sell more, market to a list, support customers) and I\u2019ll tell you which hubs you actually need and what they should cost. Or pick a tier above and I\u2019ll start from there.";
+  var DISC_US = 0.30; // site-wide illustrative "with us" rate, same as the calculator on the page
+  var calc = null, unlocked = false, apiCalled = false, firstAsked = false, greetEl = null, firstEl = null, gateEl = null;
   var CATCH = "No catch \u2014 an incentive, disclosed. CRMdiscount is independent, but the operators behind it run a certified partner agency: if your deal qualifies and you choose them, delivering your onboarding is paid work for that agency. The chat and the estimate are free, and yours to take straight to your own HubSpot rep.";
   var IDLE_PROMPTS = [
     "\u201CIs the onboarding fee actually mandatory?\u201D",
@@ -149,6 +160,107 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
   var greetStarted = false, greetDone = false, greetTimers = [], activeTw = null;
 
   function notifyParent(o){ try { if (window.parent !== window) window.parent.postMessage(o, "*"); } catch(e){} }
+  function fmt(v){ return "$" + Math.round(Number(v) || 0).toLocaleString("en-US"); }
+  function calcHas(){ return !!(calc && calc.hubs && calc.hubs.length); }
+  function tierShort(t){ return t === "Professional" ? "Pro" : t; }
+  function greetingText(){
+    if (!calcHas()) return M1;
+    var names = calc.hubs.map(function(h){ return h.hub.replace(" Hub", "") + " " + tierShort(h.tier); }).join(" + ");
+    return names + " for " + calc.people + " " + (calc.people === 1 ? "person" : "people") + " \u2014 " + fmt(calc.list) + " at list, " + fmt(calc.us) + " with us. The table can\u2019t ask the two questions that set your real range \u2014 how many contacts you email, and who actually needs a paid seat. I can.";
+  }
+  function firstQuestion(){
+    if (calcHas()) {
+      var hasMkt = calc.hubs.some(function(h){ return /marketing/i.test(h.hub); });
+      if (hasMkt) return { text: "First question: how many contacts do you actually send marketing email or ads to each month? Not your whole database \u2014 only those are priced.",
+                           chips: ["Under 2,000", "2,000\u201310,000", "10,000\u201330,000", "More than 30,000", "Not sure"] };
+      return { text: "First question: of the " + calc.people + " people, how many actually need paid Sales or Service tools \u2014 sequences, forecasting, ticket routing \u2014 rather than just access to the CRM?",
+               chips: ["All of them", "About half", "Just a few", "Not sure"] };
+    }
+    return { text: "What\u2019s the main thing you want HubSpot to do first?",
+             chips: ["Give my sales team a CRM", "Email marketing to a list", "Customer support and tickets", "All of the above"] };
+  }
+  function setLocked(on){
+    document.body.classList.toggle("locked", on);
+    input.disabled = on; sendBtn.disabled = on;
+    input.placeholder = on ? "Unlock with your email first" : "Type here\u2026";
+  }
+  // The page hands us the calculator state; the greeting follows it until the visitor has spoken
+  window.addEventListener("message", function(e){
+    var d = e.data || {};
+    if (d.crmcalc) {
+      calc = d.crmcalc;
+      if (calc.session && !apiCalled) SESSION_ID = String(calc.session).replace(/[^a-z0-9]/gi, "").slice(0, 40) || SESSION_ID;
+      if (calc.email && !emailGiven) adoptEmail(calc.email, false);
+      refreshGreeting();
+    }
+    if (d.crmcalc_email && !emailGiven) adoptEmail(d.crmcalc_email, false);
+    if (d.crmcalc_focus) { try { input.focus(); } catch(err){} }
+  });
+  function refreshGreeting(){
+    if (userMsgCount > 0 || !greetEl) return;
+    var t = greetingText();
+    greetEl.textContent = t;
+    if (messages.length && messages[0].role === "assistant") messages[0].content = t;
+    if (gateEl && !emailGiven) {
+      var lead = gateEl.querySelector(".gatelead");
+      if (lead) lead.textContent = gateLead();
+    }
+    if (unlocked && firstEl) {
+      var q = firstQuestion();
+      firstEl.textContent = q.text;
+      for (var i = messages.length - 1; i >= 0; i--) { if (messages[i].role === "assistant" && messages[i].isFirstQ) { messages[i].content = q.text; break; } }
+      setChips(q.chips.map(function(l){ return { label: l, on: function(){ setChips([]); sendToBot(l, false); } }; }));
+    }
+  }
+  function gateLead(){
+    return "Leave your work email to unlock the assistant. You\u2019ll get " + (calcHas() ? "this table" : "your estimate") + " and the negotiation tips either way, even if we get cut off.";
+  }
+  // Email accepted on either surface: unlock, tell the page, save the lead once (only when it came from here)
+  function adoptEmail(email, fromChat){
+    visitorEmail = email; emailGiven = true; awaitingEmail = false; unlocked = true;
+    if (gateEl) {
+      gateEl.innerHTML = "";
+      gateEl.textContent = "Unlocked \u2014 " + (calcHas() ? "this table" : "your estimate") + " and the negotiation tips go to " + email + ".";
+    }
+    setLocked(false);
+    if (fromChat) {
+      notifyParent({ crmcalc_email: email });
+      notifyParent({ crmchat_event: "chat_unlocked" });
+      fetch("/api/lead", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, transcript: buildTranscript(), session: SESSION_ID }) }).catch(function(){});
+    }
+    if (userMsgCount === 0) askFirst();
+    scrollDown();
+  }
+  function showGate(){
+    if (emailGiven || gateEl) return;
+    gateEl = makeBubble("assistant");
+    var lead = document.createElement("span"); lead.className = "gatelead"; lead.textContent = gateLead(); gateEl.appendChild(lead);
+    var row = document.createElement("div"); row.className = "gaterow";
+    var inp = document.createElement("input"); inp.type = "email"; inp.placeholder = "you@company.com"; inp.setAttribute("aria-label", "Work email"); inp.autocomplete = "email";
+    var btn = document.createElement("button"); btn.type = "button"; btn.textContent = "Unlock";
+    var err = document.createElement("span"); err.className = "gateerr";
+    var help = document.createElement("span"); help.className = "gatehelp"; help.textContent = "No newsletter. Two emails, then nothing unless you book.";
+    row.appendChild(inp); row.appendChild(btn); gateEl.appendChild(row); gateEl.appendChild(err); gateEl.appendChild(help);
+    function submit(){
+      var v = inp.value.trim(), m = v.match(EMAIL_RE);
+      if (!m) { err.textContent = "That doesn\u2019t look like an email address."; err.style.display = "block"; inp.focus(); return; }
+      if (isFreeMail(m[0])) { err.textContent = "Work email only, please \u2014 like name@yourcompany.com."; err.style.display = "block"; inp.focus(); return; }
+      err.style.display = "none";
+      adoptEmail(m[0], true);
+    }
+    btn.addEventListener("click", submit);
+    inp.addEventListener("keydown", function(e){ if (e.key === "Enter") { e.preventDefault(); submit(); } });
+    setLocked(true); setChips([]); scrollDown();
+  }
+  function askFirst(){
+    if (firstAsked) return; firstAsked = true;
+    var q = firstQuestion();
+    firstEl = makeBubble("assistant"); firstEl.textContent = q.text;
+    messages.push({ role: "assistant", content: q.text, isFirstQ: true });
+    setChips(q.chips.map(function(l){ return { label: l, on: function(){ setChips([]); sendToBot(l, false); } }; }));
+    scrollDown();
+  }
   function scrollDown(){ msgsEl.scrollTop = msgsEl.scrollHeight; }
   function showTyping(on){ typing.classList.toggle("on", on); if(on) scrollDown(); }
   function engage(){
@@ -207,15 +319,15 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
 
   var lastKeep = "";
   function actionChips(){
-    var primary = lastKeep ? "Save up to " + lastKeep : "Get my yes or no";
+    var primary = lastKeep ? "Save " + lastKeep + " \u00b7 book 20 minutes" : "Book 20 minutes";
     setChips([
       { label: primary, go: true, on: function(){ notifyParent({ crmchat_action: "book" }); } },
-      { label: "Send me the negotiation tips", on: function(){
+      { label: "Email me this estimate", on: function(){
           if (visitorEmail) {
-            setChips([{ label: lastKeep ? "Save up to " + lastKeep : "Get my yes or no", go: true, on: function(){ notifyParent({ crmchat_action: "book" }); } }]);
-            userSay("Send me the negotiation tips");
-            messages.push({ role: "user", content: "Send me the negotiation tips" });
-            botSay("Done \u2014 the written breakdown and the negotiation tips for a deal your size go to " + visitorEmail + " the same working day.", null, true);
+            setChips([{ label: primary, go: true, on: function(){ notifyParent({ crmchat_action: "book" }); } }]);
+            userSay("Email me this estimate");
+            messages.push({ role: "user", content: "Email me this estimate" });
+            botSay("Done \u2014 this estimate and the negotiation tips for a deal your size go to " + visitorEmail + " the same working day.", null, true);
             fetch("/api/lead", { method: "POST", headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ email: visitorEmail, transcript: buildTranscript(), session: SESSION_ID }) }).catch(function(){});
           } else {
@@ -318,16 +430,20 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
     var diffAmt = "", diffPct = "";
     if (A.total && B.total) { diffAmt = "$" + (n(A.total) - n(B.total)).toLocaleString("en-US"); diffPct = n(A.total) ? Math.round((n(A.total) - n(B.total)) / n(A.total) * 100) : ""; }
     else { diffAmt = money(diffLine) || ""; diffPct = (diffLine.match(/(\d+)\s?%/) || [])[1]; }
-    // CRMdiscount deal column: Professional hub subscription lines at HubSpot's annual rate (10% under monthly list)
-    // unless the bot already priced them lower than list.
-    var isProHub = function(l){ return /professional|\bpro\b|starter/i.test(l) && !/enterprise|onboard|implementation|setup|contact|block|tier/i.test(l); };
-    var annualApplied = false;
+    // CRMdiscount deal column: subscription lines at the site's illustrative negotiated rate (30% off list; Starter at its annual rate),
+    // unless the bot already priced them lower. Onboarding stays $0 where eligible.
+    var isSub = function(l){ return !/onboard|implementation|setup|view-only|view only/i.test(l); };
+    var discApplied = false, subList = 0;
     merged.forEach(function(r){
-      if (isProHub(r.lbl) && /^\$/.test(r.a) && /^\$/.test(r.b) && n(r.b) >= n(r.a)) {
-        r.b = "$" + Math.round(n(r.a) * 0.9).toLocaleString("en-US"); annualApplied = true;
-      }
+      if (!isSub(r.lbl) || !/^\$/.test(r.a) || !n(r.a)) return;
+      subList += n(r.a);
+      var rate = /starter/i.test(r.lbl) ? 0.75 : (1 - DISC_US);
+      var target = Math.round(n(r.a) * rate);
+      if (!/^\$/.test(r.b) || n(r.b) > target) { r.b = "$" + target.toLocaleString("en-US"); discApplied = true; }
     });
-    if (annualApplied) { sumB = merged.reduce(function(s, r){ return s + (/^\$/.test(r.b) ? n(r.b) : 0); }, 0); B.total = "$" + sumB.toLocaleString("en-US"); diffAmt = "$" + (n(A.total) - sumB).toLocaleString("en-US"); diffPct = n(A.total) ? Math.round((n(A.total) - sumB) / n(A.total) * 100) : ""; }
+    if (discApplied) { sumB = merged.reduce(function(s, r){ return s + (/^\$/.test(r.b) ? n(r.b) : 0); }, 0); B.total = "$" + sumB.toLocaleString("en-US"); diffAmt = "$" + (n(A.total) - sumB).toLocaleString("en-US"); diffPct = n(A.total) ? Math.round((n(A.total) - sumB) / n(A.total) * 100) : ""; }
+    var bracket = subList < 10000 ? "20\u201330%" : subList <= 30000 ? "30\u201345%" : "45\u201370%";
+    var annualApplied = merged.some(function(r){ return isSub(r.lbl) && /^\$/.test(r.a) && /^\$/.test(r.b) && n(r.b) < n(r.a); });
     var hasZeroOnboarding = merged.some(function(r){ return /onboard/i.test(r.lbl + " " + r.blbl) && /^\$0/.test(r.b); });
     if (diffAmt && (!lastKeep || n(diffAmt) > n(lastKeep))) lastKeep = diffAmt;
     var tier = "";
@@ -343,7 +459,7 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
     });
     html += '</tbody><tfoot><tr><td class="lbl">Year one</td><td class="amt">' + esc(A.total || "") + '</td><td class="amt good">' + esc(B.total || "") + '</td></tr></tfoot></table>';
     html += '<div class="diff"><div><strong>' + esc(diffAmt) + ' you keep</strong>' + (diffPct ? '<span>about ' + esc(diffPct) + '% of year one</span>' : '') + '</div>'
-         + '<ul>' + (annualApplied ? '<li>Hub prices at HubSpot\u2019s annual rate</li>' : '') + (hasZeroOnboarding ? '<li>Onboarding fee: $0 where your deal qualifies</li>' : '') + '<li>Negotiation tips may move it further</li><li>Illustrative \u2014 only HubSpot can quote you</li></ul></div>';
+         + '<ul>' + (annualApplied ? '<li>Subscription at ' + Math.round(DISC_US * 100) + '% off list \u2014 deals this size typically close ' + bracket + ' under it</li>' : '') + (hasZeroOnboarding ? '<li>Onboarding fee: $0 where your deal qualifies</li>' : '') + '<li>Illustrative \u2014 only HubSpot can quote you</li></ul></div>';
     var card = document.createElement("div"); card.className = "est"; card.innerHTML = html;
     return card;
   }
@@ -455,26 +571,25 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
     if (!hidden) userSay(text);
     messages.push({ role: "user", content: text });
     engage();
-    if (userMsgCount === 1 && !emailGiven && !emailNudged) {
-      // First answer: ask for the email before the model replies; the reply is released on save (or on their next message)
-      emailNudged = true; holdFirst = true;
-      setTimeout(earlyEmailAsk, 350);
-      return;
-    }
+    if (!emailGiven) { showGate(); return; }
     holdFirst = false;
     callModel();
   }
   var holdFirst = false;
   function callModel(){
     if (pending) return;
-    pending = true; sendBtn.disabled = true;
+    pending = true; sendBtn.disabled = true; apiCalled = true;
     var t0 = Date.now();
     showTyping(true);
     function callApi(){
       return fetch(ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: messages.slice(-24), session: SESSION_ID, email: visitorEmail || undefined })
+        body: JSON.stringify({
+          messages: messages.slice(-24).map(function(m){ return { role: m.role, content: m.content }; }),
+          session: SESSION_ID, email: visitorEmail || undefined,
+          calc: calcHas() ? { hubs: calc.hubs, people: calc.people, list: calc.list, self: calc.self, us: calc.us, onboarding: calc.onboarding } : undefined
+        })
       });
     }
     function checkOk(r){
@@ -505,12 +620,25 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
         finalized = true;
         clearTimeout(idleTimer);
         var finalText = strip(raw).trim();
+        // Machine line for the page's calculator (never shown): [[calc: sales=pro, marketing=starter, people=8]]
+        var cm = finalText.match(/\[\[\s*calc:\s*([^\]]+)\]\]/i);
+        if (cm) {
+          finalText = finalText.replace(cm[0], "").trim();
+          var cfg = { hubs: {}, people: null };
+          cm[1].split(/[,;]/).forEach(function(kv){
+            var p = kv.split("="); if (p.length !== 2) return;
+            var k = p[0].trim().toLowerCase(), v = p[1].trim().toLowerCase();
+            if (k === "people") { cfg.people = parseInt(v, 10) || null; return; }
+            if (/^(sales|marketing|service|content|data|revenue)$/.test(k)) cfg.hubs[k] = /^(pro|professional)/.test(v) ? "pro" : /^ent/.test(v) ? "ent" : /^starter/.test(v) ? "starter" : /^free/.test(v) ? "free" : "none";
+          });
+          notifyParent({ crmcalc_set: cfg });
+        }
         if (!finalText) { el.remove(); throw new Error("empty"); }
         messages.push({ role: "assistant", content: finalText });
         el.classList.remove("building");
         var carded = renderEstimate(el, finalText);
         if (!carded) { el.textContent = finalText; scrollDown(); }
-        if (carded || /Difference\s*[:=\u2014-]|Year one right-sized|Year one as quoted/i.test(finalText)) actionChips();
+        if (carded || /Difference\s*[:=\u2014-]|Year one right-sized|Year one as quoted/i.test(finalText)) { actionChips(); notifyParent({ crmchat_event: "chat_estimate" }); }
         pending = false;
         sendBtn.disabled = false;
         input.focus();
@@ -573,11 +701,14 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
 
   // ---------- greeting choreography ----------
   function runGreeting(){
-    // Instant greeting: no typing delay, no animation — a visitor from an ad never sees an empty chat
-    var el = makeBubble("assistant"); el.textContent = M1; scrollDown();
+    // Instant greeting: no typing delay, no animation — a visitor from an ad never sees an empty chat.
+    // The page posts the calculator state right after this and the text updates in place.
+    var t = greetingText();
+    greetEl = makeBubble("assistant"); greetEl.textContent = t; scrollDown();
     greetDone = true;
     startIdle();
-    messages.push({ role: "assistant", content: M1 });
+    messages.push({ role: "assistant", content: t });
+    if (emailGiven) askFirst(); else showGate();
   }
   function finishGreetingNow(){
     if (greetDone) return;
@@ -587,11 +718,11 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
     showTyping(false);
     if (!greetStarted) {
       greetStarted = true;
-      messages.push({ role: "assistant", content: M1 });
+      messages.push({ role: "assistant", content: greetingText() });
     }
     var bots = msgsEl.querySelectorAll(".b.bot");
-    if (bots.length === 0) botSay(M1, null, false);
-    else bots[0].textContent = M1;
+    if (bots.length === 0) botSay(greetingText(), null, false);
+    else bots[0].textContent = greetingText();
   }
 
   // ---------- idle rotating prompts ----------
@@ -615,6 +746,7 @@ html,body{touch-action:manipulation;overscroll-behavior:contain}
   promptLine.addEventListener("click", function(){
     var q = promptLine.textContent.replace(/[\u201C\u201D]/g, "");
     finishGreetingNow(); setChips([]);
+    if (!emailGiven) { showGate(); return; }
     sendToBot(q, false);
   });
 
